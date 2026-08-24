@@ -1464,6 +1464,24 @@
   /* ---------------- ISBN lookup ---------------- */
   function cleanIsbn(v){ return v.replace(/[^0-9Xx]/g, ""); }
 
+  // Converts a 13-digit ISBN starting with 978 to its ISBN-10 equivalent (returns null for anything
+  // else, including 979-prefixed ISBN-13s, which have no ISBN-10 form at all).
+  function isbn13to10(isbn13){
+    if(!/^\d{13}$/.test(isbn13) || isbn13.slice(0,3) !== "978") return null;
+    var core = isbn13.slice(3,12);
+    var sum = 0;
+    for(var i=0;i<9;i++){ sum += (10-i) * parseInt(core[i],10); }
+    var check = (11 - (sum % 11)) % 11;
+    return core + (check === 10 ? "X" : String(check));
+  }
+  function isbnVariants(isbn){
+    var clean = cleanIsbn(isbn||"");
+    var variants = [clean];
+    var alt = isbn13to10(clean);
+    if(alt) variants.push(alt);
+    return variants;
+  }
+
   function parseSeriesFromTitle(title, subtitle){
     var text = (subtitle && subtitle.indexOf("#") > -1) ? subtitle : title;
     var m = text.match(/\(([^,()]+),?\s*#?\s*(\d+(\.\d+)?)\)/);
@@ -1533,12 +1551,35 @@
   }
 
   async function fetchByIsbn(isbn){
-    var found = await tryGoogleBooks(isbn);
-    if(!found) found = await tryOpenLibrary(isbn);
-    if(found && !found.description){
-      var desc = await tryOpenLibraryDescription(isbn);
-      if(desc) found.description = desc;
+    // Google Books' ISBN index frequently only covers ISBN-10 *or* ISBN-13 for a given edition, not
+    // both — so trying just the one we were given can silently miss an edition Google Books actually has.
+    var variants = isbnVariants(isbn);
+
+    var found = null;
+    for(var i=0;i<variants.length;i++){
+      var g = await tryGoogleBooks(variants[i]);
+      if(g){
+        if(!found) found = g;
+        if(!found.description && g.description) found.description = g.description;
+        if(!found.coverUrl && g.coverUrl) found.coverUrl = g.coverUrl;
+        if(found.description) break;
+      }
     }
+
+    if(!found){
+      for(var j=0;j<variants.length;j++){
+        var o = await tryOpenLibrary(variants[j]);
+        if(o){ found = o; break; }
+      }
+    }
+
+    if(found && !found.description){
+      for(var k=0;k<variants.length;k++){
+        var desc = await tryOpenLibraryDescription(variants[k]);
+        if(desc){ found.description = desc; break; }
+      }
+    }
+
     return found;
   }
 
@@ -2029,31 +2070,34 @@
 
       try{
         var found = await fetchByIsbn(b.isbn);
-        var changed = false;
+        var gotCover = false, gotDesc = false;
+        var neededCover = !b.coverUrl, neededDesc = !b.description;
         if(found){
-          if(!b.coverUrl && found.coverUrl){ b.coverUrl = found.coverUrl; changed = true; }
-          if(!b.description && found.description){ b.description = found.description; changed = true; }
+          if(!b.coverUrl && found.coverUrl){ b.coverUrl = found.coverUrl; gotCover = true; }
+          if(!b.description && found.description){ b.description = found.description; gotDesc = true; }
         }
-        if(changed){
+        if(gotCover || gotDesc){
           fixedCount++;
           row.className = "bulk-log-row ok";
-          row.innerHTML = "<span>"+esc(b.title)+"</span><span>updated</span>";
+          var got = [gotCover && "cover", gotDesc && "blurb"].filter(Boolean).join(" + ");
+          row.innerHTML = "<span>"+esc(b.title)+"</span><span>found "+got+"</span>";
         } else {
           noMatchCount++;
           row.className = "bulk-log-row err";
-          row.innerHTML = "<span>"+esc(b.title)+"</span><span>no new match</span>";
+          var missing = [neededCover && !gotCover && "cover", neededDesc && !gotDesc && "blurb"].filter(Boolean).join(" & ");
+          row.innerHTML = "<span>"+esc(b.title)+"</span><span>no "+missing+" available anywhere</span>";
         }
       }catch(e){
         noMatchCount++;
         row.className = "bulk-log-row err";
-        row.innerHTML = "<span>"+esc(b.title)+"</span><span>failed</span>";
+        row.innerHTML = "<span>"+esc(b.title)+"</span><span>lookup failed</span>";
       }
       saveBooksLocal();
       render();
       await sleep(250);
     }
 
-    progressEl.textContent = "Done — " + fixedCount + " updated, " + noMatchCount + " unchanged.";
+    progressEl.textContent = "Done — " + fixedCount + " updated, " + noMatchCount + " have nothing available from either source.";
     btn.disabled = false;
     openDisplaySettings();
   });
