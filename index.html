@@ -627,6 +627,14 @@
       <option value="all">All tags</option>
     </select>
 
+    <select class="pill" id="statusFilter" aria-label="Filter by status">
+      <option value="all">Any status</option>
+      <option value="want">Want to read</option>
+      <option value="reading">Reading</option>
+      <option value="read">Read</option>
+      <option value="dnf">Did not finish</option>
+    </select>
+
     <div class="filter-chips" id="formatChips">
       <button class="chip active" data-format="all">All formats</button>
       <button class="chip" data-format="physical"><span class="dot" style="color:var(--brass)"></span>Physical</button>
@@ -657,6 +665,7 @@
     <button class="btn" id="exportBtn" title="Export your library as JSON">Export</button>
     <button class="btn" id="importBtn" title="Import a JSON backup, or a Goodreads/StoryGraph CSV">Import</button>
     <input type="file" id="importFile" accept=".json,application/json,.csv,text/csv" class="sr-only">
+    <button class="btn btn-danger" id="bulkDeleteBtn" title="Delete every book matching your current search and filters">Delete filtered</button>
   </div>
 </div>
 
@@ -973,6 +982,7 @@
     format:"all",
     owner:"all",
     tag:"all",
+    status:"all",
     lentOnly:false,
     sort:"title-asc",
     view:"grid"
@@ -1041,6 +1051,7 @@
       if(state.format !== "all" && b.format !== state.format) return false;
       if(state.owner !== "all" && b.owner !== state.owner) return false;
       if(state.tag !== "all" && (b.tags||[]).indexOf(state.tag) === -1) return false;
+      if(state.status !== "all" && b.status !== state.status) return false;
       if(state.lentOnly && !b.lentTo) return false;
       if(q){
         var hay = (b.title+" "+b.author+" "+(b.series||"")+" "+(b.genre||"")+" "+(b.tags||[]).join(" ")).toLowerCase();
@@ -1802,6 +1813,7 @@
   document.getElementById("sortSelect").addEventListener("change", function(e){ state.sort = e.target.value; render(); });
   document.getElementById("ownerFilter").addEventListener("change", function(e){ state.owner = e.target.value; render(); });
   document.getElementById("tagFilter").addEventListener("change", function(e){ state.tag = e.target.value; render(); });
+  document.getElementById("statusFilter").addEventListener("change", function(e){ state.status = e.target.value; render(); });
 
   document.getElementById("lentChip").addEventListener("click", function(){
     state.lentOnly = !state.lentOnly;
@@ -1881,6 +1893,27 @@
     };
     reader.readAsText(file);
     e.target.value = "";
+  });
+
+  document.getElementById("bulkDeleteBtn").addEventListener("click", function(){
+    var matched = getVisibleBooks();
+    if(!matched.length){
+      alert("No books match your current search and filters — nothing to delete.");
+      return;
+    }
+    var preview = matched.slice(0,5).map(function(b){ return "• " + b.title; }).join("\n");
+    var more = matched.length > 5 ? "\n…and " + (matched.length - 5) + " more" : "";
+    var ok = confirm(
+      "Delete " + matched.length + " book" + (matched.length===1?"":"s") + " matching your current search and filters?\n\n" +
+      preview + more +
+      "\n\nThis can't be undone — export a backup first if you're not sure. Click OK to permanently delete these."
+    );
+    if(!ok) return;
+    var matchedIds = {};
+    matched.forEach(function(b){ matchedIds[b.id] = true; });
+    books = books.filter(function(b){ return !matchedIds[b.id]; });
+    saveBooksLocal();
+    render();
   });
 
 
