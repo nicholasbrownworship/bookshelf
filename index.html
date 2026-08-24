@@ -3,38 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Shelf — Book Library</title>
+<title>The Shelf — An Archive of Books</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#18140F;
-    --bg-alt:#141110;
-    --panel:#241E17;
-    --panel-raised:#2C251C;
-    --panel-hover:#332B21;
-    --border:#3C3325;
-    --border-soft:#2C2519;
-    --ink:#EEE3CE;
-    --ink-dim:#C7B99C;
-    --ink-mute:#8C7F65;
-    --brass:#CB9A3C;
-    --brass-bright:#E3B65B;
-    --brass-soft:rgba(203,154,60,0.14);
-    --slate:#6F91A6;
-    --slate-soft:rgba(111,145,166,0.14);
-    --green:#5C7A63;
-    --green-soft:rgba(92,122,99,0.16);
-    --brick:#8E5240;
-    --brick-soft:rgba(142,82,64,0.16);
+    --bg:#120D08;
+    --bg-alt:#0C0906;
+    --panel:#26160F;
+    --panel-raised:#301C13;
+    --panel-hover:#3B2417;
+    --border:#4A3320;
+    --border-soft:#2E1D13;
+    --ink:#F0E2C4;
+    --ink-dim:#CDB48D;
+    --ink-mute:#93805F;
+    --brass:#C89A3E;
+    --brass-bright:#EAC66C;
+    --brass-soft:rgba(200,154,62,0.16);
+    --slate:#8069AE;
+    --slate-soft:rgba(128,105,174,0.16);
+    --green:#3E6B49;
+    --green-soft:rgba(62,107,73,0.18);
+    --brick:#8A2A3A;
+    --brick-soft:rgba(138,42,58,0.18);
     --radius-s:5px;
     --radius-m:9px;
     --radius-l:16px;
-    --shadow-1:0 8px 24px -10px rgba(0,0,0,0.55);
-    --shadow-2:0 20px 50px -18px rgba(0,0,0,0.7);
-    --font-display:'Fraunces', Georgia, serif;
-    --font-body:'Inter', -apple-system, sans-serif;
+    --shadow-1:0 8px 24px -10px rgba(0,0,0,0.6);
+    --shadow-2:0 24px 60px -18px rgba(0,0,0,0.75);
+    --font-display:'Cinzel', Georgia, serif;
+    --font-display-2:'Cormorant Garamond', Georgia, serif;
+    --font-body:'EB Garamond', Georgia, serif;
     --font-mono:'IBM Plex Mono', ui-monospace, monospace;
   }
 
@@ -43,13 +44,18 @@
   body{
     margin:0;
     background:
-      radial-gradient(1100px 600px at 12% -10%, rgba(203,154,60,0.06), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(111,145,166,0.05), transparent 55%),
+      radial-gradient(1200px 650px at 10% -12%, rgba(200,154,62,0.07), transparent 58%),
+      radial-gradient(900px 550px at 100% 0%, rgba(128,105,174,0.06), transparent 55%),
+      radial-gradient(1000px 700px at 50% 110%, rgba(138,42,58,0.05), transparent 60%),
       var(--bg);
     color:var(--ink);
     font-family:var(--font-body);
     -webkit-font-smoothing:antialiased;
     min-height:100vh;
+  }
+  .grain-overlay{
+    position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   ::selection{ background:var(--brass-soft); color:var(--brass-bright); }
   a{ color:inherit; }
@@ -71,39 +77,38 @@
 
   header.hero{
     position:relative;
-    padding:56px 28px 34px;
+    padding:60px 28px 34px;
     border-bottom:1px solid var(--border-soft);
+    box-shadow:0 1px 0 0 var(--brass-soft);
     overflow:hidden;
   }
   header.hero::before{
     content:"";
     position:absolute; inset:0;
-    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0 1px, transparent 1px 46px);
+    background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.014) 0 1px, transparent 1px 46px);
     pointer-events:none;
   }
   .hero-inner{ max-width:1240px; margin:0 auto; position:relative; display:flex; justify-content:space-between; align-items:flex-end; gap:32px; flex-wrap:wrap; }
   .hero-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .hero-flourish{ color:var(--brass); opacity:0.75; margin-bottom:10px; }
   .hero-eyebrow{
-    font-family:var(--font-mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
     color:var(--brass); margin:0 0 10px;
   }
   h1.hero-title{
-    font-family:var(--font-display); font-weight:600; font-optical-sizing:auto;
-    font-size:clamp(34px,5vw,54px); line-height:1.02; margin:0; letter-spacing:-0.01em;
-    color:var(--ink);
+    font-family:var(--font-display); font-weight:600;
+    font-size:clamp(34px,5vw,52px); line-height:1.05; margin:0; letter-spacing:0.01em;
+    color:var(--ink); text-shadow:0 2px 24px rgba(200,154,62,0.18);
   }
-  h1.hero-title em{ font-style:italic; color:var(--brass-bright); }
-  .hero-sub{ color:var(--ink-mute); font-size:14.5px; margin:12px 0 0; max-width:46ch; }
+  h1.hero-title em{ font-style:normal; color:var(--brass-bright); }
+  .hero-sub{ font-family:var(--font-display-2); font-style:italic; color:var(--ink-dim); font-size:17px; margin:14px 0 0; max-width:46ch; line-height:1.5; }
 
-  .sync-btn{
+  .chrome-btn{
     display:flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--border);
     color:var(--ink-mute); border-radius:999px; padding:7px 13px 7px 11px; font-size:12.5px; cursor:pointer;
-    white-space:nowrap;
+    white-space:nowrap; font-family:var(--font-body);
   }
-  .sync-btn:hover{ color:var(--ink); }
-  .sync-dot{ width:8px; height:8px; border-radius:50%; background:var(--ink-mute); flex:none; }
-  .sync-dot.on{ background:var(--green); box-shadow:0 0 0 3px var(--green-soft); }
-  .sync-dot.pending{ background:var(--brass); box-shadow:0 0 0 3px var(--brass-soft); }
+  .chrome-btn:hover{ color:var(--ink); border-color:var(--brass); }
 
   .stat-row{ display:flex; gap:26px; flex-wrap:wrap; align-items:flex-end; }
   .stat{ min-width:84px; }
@@ -149,7 +154,7 @@
   }
   .chip:hover{ color:var(--ink); border-color:var(--ink-mute); }
   .chip.active{ background:var(--brass-soft); border-color:var(--brass); color:var(--brass-bright); }
-  .chip .dot{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:0.8; }
+  .chip .dot{ width:7px; height:7px; border-radius:2px; background:currentColor; opacity:0.85; transform:rotate(45deg); }
 
   .view-toggle{ display:flex; border:1px solid var(--border); border-radius:var(--radius-m); overflow:hidden; }
   .view-toggle button{
@@ -160,11 +165,12 @@
   .view-toggle button.active{ background:var(--brass-soft); color:var(--brass-bright); }
 
   .btn-primary{
-    background:linear-gradient(180deg, var(--brass-bright), var(--brass));
-    color:#1B1610; border:none; font-weight:600; display:flex; align-items:center; gap:7px;
-    box-shadow:0 4px 14px -6px rgba(203,154,60,0.5);
+    background:linear-gradient(155deg, var(--brass-bright), var(--brass) 55%, #9A6E22);
+    color:#20140A; border:1px solid rgba(58,39,18,0.5); font-weight:600; font-family:var(--font-display-2); letter-spacing:0.01em;
+    display:flex; align-items:center; gap:7px;
+    box-shadow:0 4px 14px -6px rgba(203,154,60,0.55), inset 0 1px 0 rgba(255,255,255,0.35);
   }
-  .btn-primary:hover{ filter:brightness(1.06); color:#1B1610; }
+  .btn-primary:hover{ filter:brightness(1.06); color:#20140A; }
 
   .toolbar-spacer{ flex:1 1 auto; }
 
@@ -178,7 +184,7 @@
     margin:70px auto; max-width:420px; text-align:center; padding:0 20px;
   }
   .empty svg{ color:var(--ink-mute); margin-bottom:18px; }
-  .empty h3{ font-family:var(--font-display); font-size:22px; margin:0 0 8px; color:var(--ink); font-weight:600; }
+  .empty h3{ font-family:var(--font-display-2); font-size:24px; margin:0 0 8px; color:var(--ink); font-weight:600; font-style:italic; }
   .empty p{ color:var(--ink-mute); font-size:14px; line-height:1.6; margin:0 0 20px; }
 
   /* ---------- Grid view ---------- */
@@ -204,7 +210,7 @@
   .cover-fallback::after{
     content:""; position:absolute; inset:0; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.08), inset 8px 0 14px -10px rgba(0,0,0,0.5);
   }
-  .cover-fallback .cf-title{ font-family:var(--font-display); font-weight:600; font-size:14.5px; line-height:1.18; color:rgba(255,255,255,0.94); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
+  .cover-fallback .cf-title{ font-family:var(--font-display-2); font-weight:600; font-size:16px; line-height:1.2; color:rgba(255,255,255,0.94); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden; }
   .cover-fallback .cf-author{ font-size:10.5px; color:rgba(255,255,255,0.72); text-transform:uppercase; letter-spacing:0.05em; }
 
   .format-badge{
@@ -225,7 +231,7 @@
   }
 
   .card-meta{ padding:0 1px; }
-  .card-title{ font-size:13.5px; font-weight:600; line-height:1.28; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .card-title{ font-family:var(--font-display-2); font-weight:600; font-size:16px; line-height:1.24; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .card-author{ font-size:11.5px; color:var(--ink-mute); margin-top:2px; }
   .card-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:5px; }
   .stars{ display:flex; gap:1px; }
@@ -271,7 +277,7 @@
   }
   .modal.narrow{ max-width:480px; }
   .modal-head{ display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border-soft); position:sticky; top:0; background:var(--panel); z-index:2; }
-  .modal-head h2{ font-family:var(--font-display); font-size:20px; margin:0; font-weight:600; }
+  .modal-head h2{ font-family:var(--font-display-2); font-size:23px; margin:0; font-weight:600; font-style:italic; }
   .icon-btn{ background:none; border:none; color:var(--ink-mute); cursor:pointer; padding:6px; border-radius:6px; display:flex; }
   .icon-btn:hover{ background:var(--panel-hover); color:var(--ink); }
 
@@ -324,85 +330,120 @@
   .bulk-progress{ font-size:12px; color:var(--ink-mute); margin-top:10px; font-family:var(--font-mono); }
 
   .sync-status-box{ background:var(--bg-alt); border:1px solid var(--border-soft); border-radius:var(--radius-m); padding:14px; font-size:13px; color:var(--ink-dim); margin-bottom:16px; line-height:1.6; }
-  .tabs{ display:flex; gap:4px; margin-bottom:16px; background:var(--bg-alt); border-radius:var(--radius-m); padding:3px; border:1px solid var(--border-soft); }
-  .tabs button{ flex:1; background:none; border:none; color:var(--ink-mute); padding:8px; border-radius:6px; cursor:pointer; font-size:12.5px; }
-  .tabs button.active{ background:var(--panel-hover); color:var(--ink); }
-  .tab-pane{ display:none; }
-  .tab-pane.active{ display:block; }
 
   footer.page-foot{ text-align:center; padding:36px 20px 10px; color:var(--ink-mute); font-size:12px; font-family:var(--font-mono); }
   footer.page-foot a{ color:var(--brass); text-decoration:none; }
 
   .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
 
-  /* ---------- Display (kiosk) screen ---------- */
+  /* ---------- Display (kiosk) screen — an open grimoire ---------- */
   #displayScreen{
-    position:fixed; inset:0; background:#0C0A08; overflow:hidden; display:none;
+    position:fixed; inset:0; background:radial-gradient(ellipse at 50% 30%, #1C130A 0%, #0A0705 75%); overflow:hidden; display:none;
   }
   #displayScreen.active{ display:block; }
   #manageScreen{ display:none; }
   .disp-backdrop{
     position:absolute; inset:-40px; background-size:cover; background-position:center;
-    filter:blur(38px) brightness(0.42) saturate(1.1); transform:scale(1.15);
+    filter:blur(46px) brightness(0.30) saturate(1.15); transform:scale(1.15);
     transition:background-image .6s ease;
   }
-  .disp-backdrop.gradient{ filter:none; }
-  .disp-overlay{ position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 0%, rgba(10,8,6,0.55) 100%); }
+  .disp-backdrop.gradient{ filter:none; opacity:0.55; }
+  .disp-overlay{ position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 0%, rgba(6,4,3,0.6) 100%); }
+
+  .disp-corner{ position:absolute; z-index:3; width:34px; height:34px; opacity:0.8; pointer-events:none; }
+  .disp-corner svg{ width:100%; height:100%; color:var(--brass); }
+  .disp-corner.tl{ top:26px; left:26px; }
+  .disp-corner.tr{ top:26px; right:26px; transform:scaleX(-1); }
+  .disp-corner.bl{ bottom:26px; left:26px; transform:scaleY(-1); }
+  .disp-corner.br{ bottom:26px; right:26px; transform:scale(-1,-1); }
+
   .disp-stage{
-    position:relative; z-index:2; height:100%; display:flex; align-items:center; justify-content:center; gap:64px;
-    padding:60px; flex-wrap:wrap;
+    position:relative; z-index:2; height:100%; display:flex; align-items:center; justify-content:center;
+    padding:70px 90px;
   }
-  .disp-cover-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; max-width:420px; }
+  .disp-page{
+    position:relative; width:100%; max-width:1040px; max-height:100%;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.5), transparent 60%),
+      linear-gradient(100deg, #E9DBB8 0%, #E2D2A9 48%, #DCC99C 52%, #E6D7AF 100%);
+    border-radius:6px;
+    box-shadow:
+      0 0 0 2px #8B6A2E, 0 0 0 3px #3A2712, 0 0 0 7px #C9A34A, 0 0 0 8px #3A2712,
+      0 50px 100px -25px rgba(0,0,0,0.85), 0 0 90px -20px rgba(200,154,62,0.15);
+    display:flex; align-items:center; justify-content:center; gap:56px; flex-wrap:wrap;
+    padding:56px 64px; overflow:hidden;
+    animation:pageIn .8s cubic-bezier(.2,.8,.3,1) both;
+  }
+  .disp-page::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0.1; mix-blend-mode:multiply;
+  }
+  .disp-page::after{
+    content:""; position:absolute; top:6%; bottom:6%; left:50%; width:64px; margin-left:-32px;
+    background:linear-gradient(90deg, transparent, rgba(60,40,15,0.22) 45%, rgba(60,40,15,0.32) 50%, rgba(60,40,15,0.22) 55%, transparent);
+    pointer-events:none;
+  }
+  @keyframes pageIn{ from{ opacity:0; transform:scale(0.97) translateY(10px); } to{ opacity:1; transform:none; } }
+
+  .disp-cover-wrap{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; max-width:380px; }
   .disp-cover{
-    width:300px; aspect-ratio:2/3; border-radius:10px; overflow:hidden; box-shadow:0 40px 90px -20px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06);
+    width:250px; aspect-ratio:2/3; border-radius:4px; overflow:hidden;
+    box-shadow:0 24px 50px -16px rgba(40,25,10,0.55), 0 0 0 1px rgba(58,39,18,0.5), 0 0 0 5px #EDE1C0, 0 0 0 6px rgba(58,39,18,0.35);
     animation:dispIn .7s ease both;
   }
   .disp-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .disp-cover .cover-fallback{ padding:26px 22px; }
-  .disp-cover .cf-title{ font-size:22px; -webkit-line-clamp:6; }
-  .disp-cover .cf-author{ font-size:13px; }
-  .disp-title{ font-family:var(--font-display); font-weight:600; font-size:30px; color:var(--ink); margin:26px 0 4px; line-height:1.15; animation:dispIn .7s ease .05s both; }
-  .disp-author{ font-size:15px; color:var(--ink-dim); animation:dispIn .7s ease .1s both; }
-  .disp-meta{ display:flex; gap:10px; align-items:center; margin-top:14px; animation:dispIn .7s ease .15s both; }
-  .disp-meta .stars svg{ width:16px; height:16px; }
-  .disp-series{ font-family:var(--font-mono); font-size:12px; color:var(--ink-mute); border:1px solid rgba(255,255,255,0.14); padding:3px 9px; border-radius:5px; }
+  .disp-cover .cover-fallback{ padding:24px 20px; }
+  .disp-cover .cf-title{ font-size:20px; -webkit-line-clamp:6; font-family:var(--font-display-2); }
+  .disp-cover .cf-author{ font-size:12px; }
+  .disp-title{ font-family:var(--font-display); font-weight:600; font-size:27px; color:#2E1D10; margin:24px 0 3px; line-height:1.18; animation:dispIn .7s ease .05s both; text-shadow:0 1px 0 rgba(255,255,255,0.3); }
+  .disp-author{ font-family:var(--font-display-2); font-style:italic; font-size:16px; color:#5B4426; animation:dispIn .7s ease .1s both; }
+  .disp-meta{ display:flex; gap:10px; align-items:center; margin-top:12px; animation:dispIn .7s ease .15s both; }
+  .disp-meta .stars{ color:#A9791E !important; }
+  .disp-meta .stars svg{ width:15px; height:15px; }
+  .disp-series{ font-family:var(--font-mono); font-size:11.5px; color:#6B5230; border:1px solid rgba(90,66,30,0.35); padding:3px 9px; border-radius:5px; background:rgba(255,255,255,0.25); }
 
   @keyframes dispIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
 
-  .disp-links{ display:flex; gap:22px; flex-wrap:wrap; justify-content:center; animation:dispIn .7s ease .2s both; }
-  .disp-link{ display:flex; flex-direction:column; align-items:center; gap:10px; }
-  .disp-qr{ background:#fff; padding:12px; border-radius:12px; box-shadow:0 14px 30px -10px rgba(0,0,0,0.5); }
+  .disp-links{ position:relative; z-index:1; display:flex; flex-direction:column; gap:22px; align-items:center; animation:dispIn .7s ease .2s both; padding-left:8px; }
+  .disp-link{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .disp-qr{
+    background:#FBF6E9; padding:10px; border-radius:4px;
+    box-shadow:0 12px 26px -10px rgba(40,25,10,0.5), 0 0 0 1px rgba(58,39,18,0.45), 0 0 0 4px #C9A34A, 0 0 0 5px rgba(58,39,18,0.4);
+  }
   .disp-qr canvas, .disp-qr img{ display:block; }
-  .disp-link-label{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-dim); background:rgba(255,255,255,0.06); padding:4px 10px; border-radius:999px; }
+  .disp-link-label{ font-family:var(--font-display-2); font-style:italic; font-weight:600; font-size:13.5px; color:#5B4426; }
 
-  .disp-progress{ position:absolute; left:60px; right:60px; bottom:34px; height:3px; background:rgba(255,255,255,0.12); border-radius:2px; overflow:hidden; z-index:2; }
+  .disp-progress{ position:absolute; left:90px; right:90px; bottom:26px; height:3px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; z-index:2; }
   .disp-progress-fill{ height:100%; background:var(--brass-bright); width:0%; }
   .disp-progress-fill.animating{ animation-name:dispProgress; animation-timing-function:linear; animation-fill-mode:forwards; }
   @keyframes dispProgress{ from{ width:0%; } to{ width:100%; } }
 
-  .disp-brand{ position:absolute; top:30px; left:60px; z-index:2; font-family:var(--font-mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(238,227,206,0.5); }
+  .disp-brand{ position:absolute; top:30px; left:90px; z-index:2; font-family:var(--font-display); font-size:12px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(234,198,108,0.55); }
   .disp-pause-hint{
-    position:absolute; top:30px; right:60px; z-index:2; font-family:var(--font-mono); font-size:11px;
-    color:rgba(238,227,206,0.4); opacity:0; transition:opacity .3s ease;
+    position:absolute; top:30px; right:90px; z-index:2; font-family:var(--font-display-2); font-style:italic; font-size:13px;
+    color:rgba(234,198,108,0.55); opacity:0; transition:opacity .3s ease;
   }
   #displayScreen.paused .disp-pause-hint{ opacity:1; }
 
   .disp-manage-btn{
     position:absolute; bottom:26px; right:30px; z-index:3; width:38px; height:38px; border-radius:50%;
-    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:rgba(238,227,206,0.55);
+    background:rgba(255,255,255,0.05); border:1px solid rgba(234,198,108,0.25); color:rgba(234,198,108,0.6);
     display:flex; align-items:center; justify-content:center; cursor:pointer;
   }
-  .disp-manage-btn:hover{ background:rgba(255,255,255,0.14); color:var(--ink); }
+  .disp-manage-btn:hover{ background:rgba(234,198,108,0.12); color:var(--brass-bright); }
 
   .disp-empty{ position:relative; z-index:2; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--ink-mute); text-align:center; padding:40px; }
-  .disp-empty h3{ font-family:var(--font-display); color:var(--ink); font-size:24px; margin:14px 0 6px; }
+  .disp-empty h3{ font-family:var(--font-display-2); color:var(--ink); font-size:26px; margin:14px 0 6px; font-style:italic; }
 
   .manage-return-btn{ display:flex; align-items:center; gap:6px; }
 
   @media (max-width:900px){
-    .disp-stage{ flex-direction:column; gap:32px; padding:30px 20px 90px; }
-    .disp-cover{ width:220px; }
-    .disp-title{ font-size:24px; }
+    .disp-stage{ padding:30px 20px 90px; }
+    .disp-page{ padding:34px 26px; gap:32px; }
+    .disp-page::after{ display:none; }
+    .disp-cover{ width:190px; }
+    .disp-title{ font-size:22px; }
     .disp-brand, .disp-pause-hint{ left:24px; right:24px; }
     .disp-progress{ left:24px; right:24px; }
   }
@@ -410,12 +451,18 @@
 </head>
 <body>
 
+<div class="grain-overlay" aria-hidden="true"></div>
+
 <!-- ============== DISPLAY (KIOSK) SCREEN — this is the default view ============== -->
 <div id="displayScreen">
   <div class="disp-backdrop gradient" id="dispBackdrop"></div>
   <div class="disp-overlay"></div>
   <div class="disp-brand">The Shelf</div>
   <div class="disp-pause-hint">Paused — tap again to resume</div>
+  <div class="disp-corner tl" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner tr" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner bl" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner br" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
   <button class="disp-manage-btn" id="dispManageBtn" title="Manage library" aria-label="Manage library">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
   </button>
@@ -430,20 +477,19 @@
   <div class="hero-inner">
     <div>
       <div class="hero-top">
-        <p class="hero-eyebrow">A shared library</p>
+        <div class="hero-flourish" aria-hidden="true">
+          <svg width="30" height="14" viewBox="0 0 60 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M0 12h20M40 12h20M20 12c3-8 8-8 10 0 2 8 7 8 10 0"/></svg>
+        </div>
       </div>
+      <p class="hero-eyebrow">Kept by two, for the love of it</p>
       <h1 class="hero-title">The <em>Shelf</em></h1>
-      <p class="hero-sub">Every book, ebook, and audiobook we own or want &mdash; in one place, sorted however you like.</p>
-      <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
-        <button class="sync-btn" id="syncBtn">
-          <span class="sync-dot" id="syncDot"></span>
-          <span id="syncLabel">Local only — set up sync</span>
-        </button>
-        <button class="sync-btn manage-return-btn" id="backToDisplayBtn">
+      <p class="hero-sub">Every volume we own, borrow, or covet — bound, digital, or spoken aloud — catalogued in one archive.</p>
+      <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+        <button class="chrome-btn manage-return-btn" id="backToDisplayBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
           Back to display
         </button>
-        <button class="sync-btn" id="displaySettingsBtn">
+        <button class="chrome-btn" id="displaySettingsBtn">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
           Display settings
         </button>
@@ -708,79 +754,6 @@
   </div>
 </div>
 
-<!-- Sync Modal -->
-<div class="modal-backdrop" id="syncBackdrop" style="display:none;">
-  <div class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="syncTitle">
-    <div class="modal-head">
-      <h2 id="syncTitle">Sync between devices</h2>
-      <button class="icon-btn" id="closeSyncBtn" aria-label="Close">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-
-      <div id="syncConnectedView" style="display:none;">
-        <div class="sync-status-box" id="syncConnectedStatus"></div>
-        <div class="foot-actions">
-          <button type="button" class="btn btn-danger" id="syncDisconnectBtn">Sign out &amp; stop syncing</button>
-        </div>
-      </div>
-
-      <div id="syncSetupView">
-        <div class="sync-status-box">
-          Real-time sync uses <strong>Firebase</strong> (free tier is plenty for two people's libraries). It takes about five minutes to set up once, then both of you will see the same shelf update live. Full steps are in the README — short version below.
-        </div>
-
-        <div class="tabs">
-          <button class="active" data-tab="setup" type="button">1. Connect</button>
-          <button data-tab="help" type="button">Setup help</button>
-        </div>
-
-        <div class="tab-pane active" id="tabSetup">
-          <label for="fbConfig">Firebase config (paste the whole object from your Firebase console)</label>
-          <textarea class="bulk-textarea" id="fbConfig" style="min-height:90px;" placeholder='{"apiKey":"…","authDomain":"…","projectId":"…", …}'></textarea>
-
-          <div style="margin-top:14px;">
-            <label for="householdId">Household ID</label>
-            <input type="text" id="householdId" placeholder="e.g. brown-family — any string, just use the same one on both devices">
-          </div>
-
-          <div style="margin-top:14px; display:flex; gap:10px;">
-            <div style="flex:1;">
-              <label for="fbEmail">Email</label>
-              <input type="email" id="fbEmail" placeholder="you@example.com">
-            </div>
-            <div style="flex:1;">
-              <label for="fbPassword">Password</label>
-              <input type="password" id="fbPassword" placeholder="At least 6 characters">
-            </div>
-          </div>
-          <div class="isbn-status" id="syncStatus"></div>
-
-          <div class="modal-foot">
-            <div class="foot-actions">
-              <button type="button" class="btn btn-ghost" id="fbSignUpBtn">Create account &amp; connect</button>
-              <button type="button" class="btn btn-primary" id="fbSignInBtn">Sign in &amp; connect</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="tabHelp">
-          <p class="hint" style="font-size:13px; line-height:1.7;">
-            1. Go to <strong>console.firebase.google.com</strong> and create a free project.<br>
-            2. In the project, open <strong>Build → Authentication</strong>, click "Get started," and enable the <strong>Email/Password</strong> sign-in method.<br>
-            3. Open <strong>Build → Firestore Database</strong>, click "Create database," and start it in <em>test mode</em> (we'll tighten the rules below).<br>
-            4. In Firestore's <strong>Rules</strong> tab, paste:<br>
-            <code style="display:block; background:var(--bg-alt); padding:8px; border-radius:6px; margin:6px 0; font-size:11px;">allow read, write: if request.auth != null;</code>
-            5. Back in Project settings (gear icon) → General → "Your apps," add a Web app, and copy the <code>firebaseConfig</code> object it gives you into the box on the Connect tab.<br>
-            6. Pick any household ID (just a shared word) and create an account. Do the same "Sign in" (not "Create account") on your wife's device with the same household ID.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Display Settings Modal -->
 <div class="modal-backdrop" id="displaySettingsBackdrop" style="display:none;">
   <div class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="dsTitle">
@@ -820,7 +793,6 @@
   /* ---------------- Data layer ---------------- */
   var STORAGE_KEY = "theshelf.books.v1";
   var GOAL_KEY = "theshelf.goal.v1";
-  var FB_SETTINGS_KEY = "theshelf.fbsettings.v1"; // { config, householdId } — no password stored
 
   function loadBooks(){
     try{
@@ -1087,18 +1059,16 @@
     });
   }
 
-  /* ---------------- Persistence (local + optional cloud) ---------------- */
+  /* ---------------- Persistence ---------------- */
   function persistBook(bookData){
     var idx = books.findIndex(function(b){ return b.id === bookData.id; });
     if(idx > -1) books[idx] = bookData; else books.push(bookData);
     saveBooksLocal();
-    if(cloud.active) cloud.writeBook(bookData);
     render();
   }
   function persistDelete(id){
     books = books.filter(function(b){ return b.id !== id; });
     saveBooksLocal();
-    if(cloud.active) cloud.deleteBook(id);
     render();
   }
 
@@ -1209,10 +1179,9 @@
   document.addEventListener("keydown", function(e){
     if(e.key !== "Escape") return;
     var dsOpen = document.getElementById("displaySettingsBackdrop").style.display === "flex";
-    var anyModalWasOpen = backdrop.style.display === "flex" || bulkBackdrop.style.display === "flex" || syncBackdrop.style.display === "flex" || dsOpen;
+    var anyModalWasOpen = backdrop.style.display === "flex" || bulkBackdrop.style.display === "flex" || dsOpen;
     if(backdrop.style.display === "flex") closeModal();
     if(bulkBackdrop.style.display === "flex") closeBulk();
-    if(syncBackdrop.style.display === "flex") closeSync();
     if(dsOpen) closeDisplaySettings();
     if(!anyModalWasOpen && disp.screen === "manage") switchScreen("display");
   });
@@ -1444,7 +1413,6 @@
             dateAdded: Date.now()
           };
           books.push(newBook);
-          if(cloud.active) cloud.writeBook(newBook);
           okCount++;
           row.className = "bulk-log-row ok";
           row.innerHTML = "<span>"+esc(isbn)+" — "+esc(found.title)+"</span><span>added</span>";
@@ -1531,10 +1499,9 @@
         if(mode){
           var existingIds = {};
           books.forEach(function(b){ existingIds[b.id] = true; });
-          incoming.forEach(function(b){ if(!existingIds[b.id]){ books.push(b); if(cloud.active) cloud.writeBook(b); } });
+          incoming.forEach(function(b){ if(!existingIds[b.id]) books.push(b); });
         } else {
           books = incoming;
-          if(cloud.active) incoming.forEach(function(b){ cloud.writeBook(b); });
         }
         saveBooksLocal();
         render();
@@ -1546,175 +1513,6 @@
     e.target.value = "";
   });
 
-  /* ================= Optional Firebase sync ================= */
-  var cloud = {
-    active:false, app:null, auth:null, db:null, householdId:null, unsub:null,
-
-    setStatus:function(mode, text){
-      var dot = document.getElementById("syncDot");
-      var label = document.getElementById("syncLabel");
-      dot.className = "sync-dot" + (mode === "on" ? " on" : mode === "pending" ? " pending" : "");
-      label.textContent = text;
-    },
-
-    loadScript:function(src){
-      return new Promise(function(resolve, reject){
-        var s = document.createElement("script");
-        s.src = src; s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    },
-
-    ensureSdk:async function(){
-      if(window.firebase && window.firebase.apps) return;
-      await this.loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js");
-      await this.loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js");
-      await this.loadScript("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js");
-    },
-
-    connect:async function(config, householdId, email, password, createAccount){
-      this.setStatus("pending", "Connecting…");
-      await this.ensureSdk();
-      this.app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(config);
-      this.auth = firebase.auth();
-      this.db = firebase.firestore();
-      this.householdId = householdId;
-
-      if(createAccount){
-        await this.auth.createUserWithEmailAndPassword(email, password);
-      } else {
-        await this.auth.signInWithEmailAndPassword(email, password);
-      }
-
-      localStorage.setItem(FB_SETTINGS_KEY, JSON.stringify({ config:config, householdId:householdId, email:email }));
-      this.startSync();
-    },
-
-    startSync:function(){
-      var self = this;
-      var col = this.db.collection("households").doc(this.householdId).collection("books");
-
-      // One-time merge: push anything local that isn't in the cloud yet.
-      col.get().then(function(snap){
-        var cloudIds = {}; snap.forEach(function(doc){ cloudIds[doc.id] = true; });
-        books.forEach(function(b){ if(!cloudIds[b.id]) col.doc(b.id).set(b); });
-      });
-
-      this.unsub = col.onSnapshot(function(snap){
-        var next = [];
-        snap.forEach(function(doc){ next.push(doc.data()); });
-        books = next;
-        saveBooksLocal();
-        render();
-      });
-
-      this.active = true;
-      this.setStatus("on", "Synced (" + this.householdId + ")");
-      document.getElementById("storageFootNote").innerHTML =
-        "Synced live via <strong>" + esc(this.householdId) + "</strong> &middot; Export still makes a good backup";
-    },
-
-    writeBook:function(b){
-      if(!this.active) return;
-      this.db.collection("households").doc(this.householdId).collection("books").doc(b.id).set(b).catch(function(e){ console.error(e); });
-    },
-    deleteBook:function(id){
-      if(!this.active) return;
-      this.db.collection("households").doc(this.householdId).collection("books").doc(id).delete().catch(function(e){ console.error(e); });
-    },
-
-    disconnect:function(){
-      if(this.unsub) this.unsub();
-      if(this.auth) this.auth.signOut();
-      this.active = false;
-      localStorage.removeItem(FB_SETTINGS_KEY);
-      this.setStatus("", "Local only — set up sync");
-      document.getElementById("storageFootNote").innerHTML =
-        "Stored locally in this browser &middot; use <strong>Export</strong> to back up your library";
-    }
-  };
-
-  var syncBackdrop = document.getElementById("syncBackdrop");
-  function openSync(){
-    syncBackdrop.style.display = "flex";
-    document.getElementById("syncConnectedView").style.display = cloud.active ? "block" : "none";
-    document.getElementById("syncSetupView").style.display = cloud.active ? "none" : "block";
-    if(cloud.active){
-      document.getElementById("syncConnectedStatus").innerHTML =
-        "Connected as <strong>" + esc((JSON.parse(localStorage.getItem(FB_SETTINGS_KEY)||"{}").email)||"") + "</strong><br>Household: <strong>" + esc(cloud.householdId) + "</strong>";
-    }
-  }
-  function closeSync(){ syncBackdrop.style.display = "none"; }
-  document.getElementById("syncBtn").addEventListener("click", openSync);
-  document.getElementById("closeSyncBtn").addEventListener("click", closeSync);
-  syncBackdrop.addEventListener("click", function(e){ if(e.target === syncBackdrop) closeSync(); });
-
-  document.querySelectorAll(".tabs button").forEach(function(tabBtn){
-    tabBtn.addEventListener("click", function(){
-      document.querySelectorAll(".tabs button").forEach(function(b){ b.classList.remove("active"); });
-      document.querySelectorAll(".tab-pane").forEach(function(p){ p.classList.remove("active"); });
-      tabBtn.classList.add("active");
-      document.getElementById(tabBtn.getAttribute("data-tab") === "setup" ? "tabSetup" : "tabHelp").classList.add("active");
-    });
-  });
-
-  async function handleConnectClick(createAccount){
-    var statusEl = document.getElementById("syncStatus");
-    var configRaw = document.getElementById("fbConfig").value.trim();
-    var householdId = document.getElementById("householdId").value.trim();
-    var email = document.getElementById("fbEmail").value.trim();
-    var password = document.getElementById("fbPassword").value;
-
-    if(!configRaw || !householdId || !email || !password){
-      statusEl.textContent = "Fill in the config, household ID, email, and password first.";
-      statusEl.className = "isbn-status err";
-      return;
-    }
-    var config;
-    try{ config = JSON.parse(configRaw); }
-    catch(e){ statusEl.textContent = "That doesn't look like valid JSON — paste the config object exactly as Firebase gave it to you."; statusEl.className = "isbn-status err"; return; }
-
-    statusEl.textContent = "Connecting…";
-    statusEl.className = "isbn-status";
-    try{
-      await cloud.connect(config, householdId, email, password, createAccount);
-      statusEl.textContent = "Connected!";
-      statusEl.className = "isbn-status ok";
-      setTimeout(closeSync, 700);
-    }catch(err){
-      console.error(err);
-      statusEl.textContent = (err && err.message) ? err.message : "Couldn't connect — check your details and try again.";
-      statusEl.className = "isbn-status err";
-    }
-  }
-  document.getElementById("fbSignUpBtn").addEventListener("click", function(){ handleConnectClick(true); });
-  document.getElementById("fbSignInBtn").addEventListener("click", function(){ handleConnectClick(false); });
-
-  document.getElementById("syncDisconnectBtn").addEventListener("click", function(){
-    cloud.disconnect();
-    closeSync();
-  });
-
-  /* Reconnect automatically if we have saved settings (still requires the SDK + a fresh sign-in
-     if the session expired — for simplicity we just prompt the user to re-open Sync in that case). */
-  (function tryAutoReconnect(){
-    var raw = localStorage.getItem(FB_SETTINGS_KEY);
-    if(!raw) return;
-    try{
-      var saved = JSON.parse(raw);
-      cloud.setStatus("pending", "Reconnecting…");
-      cloud.ensureSdk().then(function(){
-        cloud.app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(saved.config);
-        cloud.auth = firebase.auth();
-        cloud.db = firebase.firestore();
-        cloud.householdId = saved.householdId;
-        cloud.auth.onAuthStateChanged(function(user){
-          if(user){ cloud.startSync(); }
-          else { cloud.setStatus("", "Local only — sign in again to sync"); }
-        });
-      }).catch(function(){ cloud.setStatus("", "Local only — set up sync"); });
-    }catch(e){ /* ignore malformed settings */ }
-  })();
 
   /* ================= Display (kiosk) screen ================= */
   var DISPLAY_SETTINGS_KEY = "theshelf.displaysettings.v1";
