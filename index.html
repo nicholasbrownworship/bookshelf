@@ -433,6 +433,69 @@
   }
   .disp-qr canvas, .disp-qr img{ display:block; }
   .disp-link-label{ font-family:var(--font-display-2); font-style:italic; font-weight:600; font-size:13.5px; color:#5B4426; }
+  .disp-link-label .search-tag{ font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:0.04em; color:#8A7346; font-style:normal; display:block; }
+
+  /* ---- Multi-book grid (default kiosk view) ---- */
+  .disp-grid{ position:relative; z-index:1; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:34px 30px; width:100%; }
+  .disp-mini{
+    display:flex; flex-direction:column; align-items:center; text-align:center; width:168px;
+    background:none; border:none; cursor:pointer; padding:0; font-family:inherit; color:inherit;
+    animation:dispIn .6s ease both;
+  }
+  .disp-mini-cover{
+    position:relative; width:150px; aspect-ratio:2/3; border-radius:4px; overflow:hidden;
+    box-shadow:0 16px 32px -14px rgba(40,25,10,0.55), 0 0 0 1px rgba(58,39,18,0.5), 0 0 0 4px #EDE1C0, 0 0 0 5px rgba(58,39,18,0.35);
+    transition:transform .15s ease;
+  }
+  .disp-mini:hover .disp-mini-cover, .disp-mini:focus-visible .disp-mini-cover{ transform:translateY(-4px) scale(1.03); }
+  .disp-mini-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .disp-mini-cover .cover-fallback{ padding:14px 10px; }
+  .disp-mini-cover .cf-title{ font-size:12.5px; -webkit-line-clamp:6; }
+  .disp-mini-cover .cf-author{ font-size:8.5px; }
+  .disp-mini-badge{
+    position:absolute; bottom:6px; right:6px; width:24px; height:24px; border-radius:50%;
+    background:rgba(42,28,15,0.88); display:flex; align-items:center; justify-content:center; color:#EAC66C;
+    box-shadow:0 0 0 1px rgba(234,198,108,0.4);
+  }
+  .disp-mini-badge svg{ width:13px; height:13px; }
+  .disp-mini-title{ font-family:var(--font-display-2); font-weight:600; font-size:14px; color:#2E1D10; margin-top:11px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .disp-mini-author{ font-family:var(--font-display-2); font-style:italic; font-size:11.5px; color:#6B5230; margin-top:3px; }
+  .disp-mini-stars{ margin-top:5px; color:#A9791E; }
+  .disp-mini-stars svg{ width:10px; height:10px; }
+
+  /* ---- Featured single-book overlay ---- */
+  .disp-featured-backdrop{
+    position:fixed; inset:0; z-index:50; background:rgba(8,6,4,0.78); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center; padding:40px;
+    animation:fadeInDisp .22s ease;
+  }
+  @keyframes fadeInDisp{ from{ opacity:0; } to{ opacity:1; } }
+  .disp-featured-card{
+    position:relative; max-width:840px; width:100%; max-height:88vh; overflow-y:auto;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.5), transparent 60%),
+      linear-gradient(100deg, #E9DBB8 0%, #E2D2A9 48%, #DCC99C 52%, #E6D7AF 100%);
+    border-radius:8px;
+    box-shadow:
+      0 0 0 2px #8B6A2E, 0 0 0 3px #3A2712, 0 0 0 7px #C9A34A, 0 0 0 8px #3A2712,
+      0 50px 100px -25px rgba(0,0,0,0.85);
+    padding:52px 56px; display:flex; gap:44px; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+    animation:pageIn .3s cubic-bezier(.2,.8,.3,1) both;
+  }
+  .disp-featured-close{
+    position:absolute; top:16px; right:16px; width:38px; height:38px; border-radius:50%;
+    background:rgba(58,39,18,0.14); border:none; display:flex; align-items:center; justify-content:center;
+    color:#5B4426; cursor:pointer; z-index:2;
+  }
+  .disp-featured-close:hover{ background:rgba(58,39,18,0.24); }
+  .disp-featured-genre{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:#8A7346; margin-top:10px; }
+  .disp-featured-desc{ font-family:var(--font-body); font-size:14.5px; line-height:1.7; color:#4A371E; margin-top:16px; max-width:44ch; text-align:left; }
+  .disp-featured-desc.clamp{ display:-webkit-box; -webkit-line-clamp:8; -webkit-box-orient:vertical; overflow:hidden; }
+  .disp-featured-notice{ font-family:var(--font-display-2); font-style:italic; font-size:12.5px; color:#8A7346; margin-top:14px; }
+
+  @media (max-width:900px){
+    .disp-featured-card{ padding:40px 26px; gap:28px; }
+  }
 
   .disp-progress{ position:absolute; left:90px; right:90px; bottom:26px; height:3px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden; z-index:2; }
   .disp-progress-fill{ height:100%; background:var(--brass-bright); width:0%; }
@@ -742,6 +805,10 @@
             <label for="fNotes">Notes</label>
             <textarea id="fNotes" placeholder="Thoughts, where you bought it, whatever's worth remembering…"></textarea>
           </div>
+          <div class="full">
+            <label for="fDescription">Blurb / description</label>
+            <textarea id="fDescription" placeholder="A short synopsis — auto-filled by ISBN lookup when available, editable."></textarea>
+          </div>
         </div>
 
         <div class="modal-foot">
@@ -809,8 +876,8 @@
       </div>
 
       <div style="margin-top:14px; display:flex; align-items:center; gap:8px;">
-        <input type="checkbox" id="grFetchCovers" style="width:auto;">
-        <label for="grFetchCovers" style="margin-bottom:0;">Fetch cover art by ISBN (slower — one request per book)</label>
+        <input type="checkbox" id="grFetchCovers" checked style="width:auto;">
+        <label for="grFetchCovers" style="margin-bottom:0;">Fetch cover art &amp; description by ISBN (slower — one request per book, on by default since the display screen needs covers)</label>
       </div>
       <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
         <input type="checkbox" id="grSkipDupes" checked style="width:auto;">
@@ -818,7 +885,7 @@
       </div>
 
       <div class="hint" style="margin-top:12px;">
-        Ratings, shelves (as tags), read/want/reading status, and dates all come straight from the file — no lookups needed for those. Format (physical/ebook/audiobook) is guessed from the "Binding" column and can be off for a few titles; worth a glance after importing.
+        Ratings, shelves (as tags), read/want/reading status, and dates all come straight from the file — no lookups needed for those. Format (physical/ebook/audiobook) is guessed from the "Binding" column and can be off for a few titles; worth a glance after importing. Cover/description lookups are best-effort — a handful of ISBNs won't have a match on Google Books or Open Library, and those titles will just show a generated placeholder cover instead. That's normal for a big import, not a bug; you can always add a cover URL by hand afterward for any that matter to you.
       </div>
 
       <div class="bulk-progress" id="grProgress" style="display:none;"></div>
@@ -845,14 +912,18 @@
     </div>
     <div class="modal-body">
       <div style="margin-bottom:16px;">
-        <label for="dsInterval">Seconds per book</label>
-        <input type="number" id="dsInterval" min="4" max="120" step="1">
+        <label for="dsGroupSize">Books shown at once</label>
+        <input type="number" id="dsGroupSize" min="1" max="9" step="1">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label for="dsInterval">Seconds before rotating to a new group</label>
+        <input type="number" id="dsInterval" min="8" max="180" step="1">
       </div>
       <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px;">
         <input type="checkbox" id="dsIncludePhysical" style="width:auto;">
         <label for="dsIncludePhysical" style="margin-bottom:0;">Include physical books in the rotation</label>
       </div>
-      <div class="hint" style="margin-bottom:16px;">Physical books show cover art only — QR codes only appear for ebooks/audiobooks that have a store link saved.</div>
+      <div class="hint" style="margin-bottom:16px;">Physical books show cover art only. Tap any book on the display screen to see it full-size with its store QR codes. Ebooks/audiobooks without a saved store link still get an Amazon search QR automatically — look for "(search)" under the label to tell it apart from an exact link.</div>
 
       <div class="sync-status-box" id="linkCoverageNote"></div>
 
@@ -1240,6 +1311,7 @@
       document.getElementById("fLinkAppleBooks").value = book.linkAppleBooks || "";
       document.getElementById("fLinkLibby").value = book.linkLibby || "";
       document.getElementById("fNotes").value = book.notes || "";
+      document.getElementById("fDescription").value = book.description || "";
       currentRating = book.rating || 0;
       currentLentTo = book.lentTo || null;
       currentLentDate = book.lentDate ? new Date(book.lentDate).toISOString().slice(0,10) : null;
@@ -1302,6 +1374,7 @@
       lentTo: lentToVal,
       lentDate: lentDateVal,
       notes: document.getElementById("fNotes").value.trim(),
+      description: document.getElementById("fDescription").value.trim(),
       rating: currentRating,
       dateAdded: existing ? existing.dateAdded : Date.now()
     };
@@ -1343,6 +1416,7 @@
       year: v.publishedDate ? parseInt(v.publishedDate.slice(0,4)) : null,
       pages: v.pageCount || null,
       genre: (v.categories || [])[0] || "",
+      description: v.description || "",
       coverUrl: v.imageLinks ? (v.imageLinks.thumbnail || v.imageLinks.smallThumbnail || "").replace("http://","https://") : ""
     };
   }
@@ -1361,6 +1435,7 @@
       year: rec.publish_date ? parseInt((rec.publish_date.match(/\d{4}/)||[])[0]) : null,
       pages: rec.number_of_pages || null,
       genre: rec.subjects ? rec.subjects[0].name : "",
+      description: rec.notes ? (typeof rec.notes === "string" ? rec.notes : (rec.notes.value||"")) : "",
       coverUrl: rec.cover ? rec.cover.medium : "https://covers.openlibrary.org/b/isbn/" + isbn + "-M.jpg"
     };
   }
@@ -1395,6 +1470,7 @@
       if(found.year) document.getElementById("fYear").value = found.year;
       if(found.pages) document.getElementById("fPages").value = found.pages;
       if(found.genre) document.getElementById("fGenre").value = found.genre;
+      if(found.description) document.getElementById("fDescription").value = found.description;
       if(found.coverUrl) document.getElementById("fCover").value = found.coverUrl;
       document.getElementById("fIsbn").value = isbn;
 
@@ -1483,6 +1559,7 @@
             status: "want",
             dateFinished: null,
             genre: found.genre || "",
+            description: found.description || "",
             year: found.year || null,
             pages: found.pages || null,
             isbn: isbn,
@@ -1664,10 +1741,12 @@
       }
 
       var coverUrl = "";
+      var description = "";
       if(fetchCovers && p.isbn){
         try{
           var found = await fetchByIsbn(p.isbn);
           if(found && found.coverUrl) coverUrl = found.coverUrl;
+          if(found && found.description) description = found.description;
           await sleep(250);
         }catch(e){ /* cover fetch is best-effort */ }
       }
@@ -1684,6 +1763,7 @@
           status: p.status,
           dateFinished: p.dateFinished,
           genre: "",
+          description: description,
           year: p.year,
           pages: p.pages,
           isbn: p.isbn,
@@ -1806,37 +1886,86 @@
 
   /* ================= Display (kiosk) screen ================= */
   var DISPLAY_SETTINGS_KEY = "theshelf.displaysettings.v1";
+  var DEFAULT_DISPLAY_SETTINGS = { interval:35, groupSize:5, includePhysical:true };
   function loadDisplaySettings(){
     try{
       var raw = localStorage.getItem(DISPLAY_SETTINGS_KEY);
-      return raw ? JSON.parse(raw) : { interval:10, includePhysical:true };
-    }catch(e){ return { interval:10, includePhysical:true }; }
+      var parsed = raw ? JSON.parse(raw) : {};
+      return {
+        interval: parsed.interval || DEFAULT_DISPLAY_SETTINGS.interval,
+        groupSize: parsed.groupSize || DEFAULT_DISPLAY_SETTINGS.groupSize,
+        includePhysical: parsed.includePhysical !== undefined ? parsed.includePhysical : DEFAULT_DISPLAY_SETTINGS.includePhysical
+      };
+    }catch(e){ return Object.assign({}, DEFAULT_DISPLAY_SETTINGS); }
   }
   var displaySettings = loadDisplaySettings();
   function saveDisplaySettings(){ localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(displaySettings)); }
 
+  var LINK_DEFS = [
+    { key:"linkAmazon", label:"Amazon" },
+    { key:"linkAppleBooks", label:"Apple Books" },
+    { key:"linkLibby", label:"Libby" }
+  ];
+  function amazonSearchUrl(book){
+    return "https://www.amazon.com/s?k=" + encodeURIComponent(book.title + " " + book.author);
+  }
+  function bookLinks(book){
+    // Returns [{label, url, isFallback}] — real links first, then an Amazon search fallback
+    // if no explicit Amazon link was saved, so eligible books always have something scannable.
+    if(book.format === "physical") return [];
+    var out = [];
+    LINK_DEFS.forEach(function(d){
+      if(book[d.key]) out.push({ label:d.label, url:book[d.key], isFallback:false });
+    });
+    if(!book.linkAmazon) out.push({ label:"Amazon", url:amazonSearchUrl(book), isFallback:true });
+    return out;
+  }
+  function renderQrColumn(container, links){
+    links.forEach(function(l){
+      var col = document.createElement("div");
+      col.className = "disp-link";
+      var qrBox = document.createElement("div");
+      qrBox.className = "disp-qr";
+      col.appendChild(qrBox);
+      var label = document.createElement("div");
+      label.className = "disp-link-label";
+      label.innerHTML = esc(l.label) + (l.isFallback ? '<span class="search-tag">search</span>' : '');
+      col.appendChild(label);
+      container.appendChild(col);
+      try{
+        new QRCode(qrBox, { text:l.url, width:132, height:132, colorDark:"#161310", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M });
+      }catch(e){ console.error("QR generation failed", e); }
+    });
+  }
+
   var disp = {
-    timer:null, progressEl:null, paused:false, lastId:null, screen:"display",
+    timer:null, paused:false, screen:"display", currentGroup:[], lastGroupIds:[], featuredId:null, featureTimeout:null,
 
     eligibleBooks:function(){
       return displaySettings.includePhysical ? books.slice() : books.filter(function(b){ return b.format !== "physical"; });
     },
 
-    pickNext:function(){
+    pickGroup:function(){
       var pool = this.eligibleBooks();
-      if(!pool.length) return null;
-      if(pool.length === 1) return pool[0];
-      var candidate;
-      do{ candidate = pool[Math.floor(Math.random()*pool.length)]; } while(candidate.id === this.lastId);
-      return candidate;
+      if(!pool.length) return [];
+      var size = Math.min(displaySettings.groupSize, pool.length);
+      if(pool.length <= size) return pool.slice();
+      // Prefer books not in the immediately-previous group, filling in from the rest if needed.
+      var lastIds = this.lastGroupIds;
+      var fresh = pool.filter(function(b){ return lastIds.indexOf(b.id) === -1; });
+      var shuffled = fresh.concat(pool.filter(function(b){ return lastIds.indexOf(b.id) > -1; }));
+      // simple shuffle
+      for(var i=shuffled.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=shuffled[i]; shuffled[i]=shuffled[j]; shuffled[j]=t; }
+      return shuffled.slice(0, size);
     },
 
     show:function(){
       var stage = document.getElementById("dispStage");
       var backdrop = document.getElementById("dispBackdrop");
-      var book = this.pickNext();
+      var group = this.pickGroup();
 
-      if(!book){
+      if(!group.length){
+        this.currentGroup = [];
         stage.innerHTML = '<div class="disp-page disp-page-empty">'+
           '<div class="disp-empty">'+
             '<div class="disp-seal">'+
@@ -1855,59 +1984,97 @@
         '</div>';
         backdrop.className = "disp-backdrop gradient";
         backdrop.style.background = "";
+        this.restartProgress();
         return;
       }
-      this.lastId = book.id;
 
-      if(book.coverUrl){
+      this.currentGroup = group;
+      this.lastGroupIds = group.map(function(b){ return b.id; });
+
+      // Backdrop: blur the cover of the first book with a cover, else a hashed gradient of the group.
+      var withCover = group.find(function(b){ return b.coverUrl; });
+      if(withCover){
         backdrop.className = "disp-backdrop";
-        backdrop.style.backgroundImage = "url('"+book.coverUrl.replace(/'/g,"")+"')";
+        backdrop.style.backgroundImage = "url('"+withCover.coverUrl.replace(/'/g,"")+"')";
       } else {
         backdrop.className = "disp-backdrop gradient";
-        backdrop.style.background = hashColor(book.title+book.author).css;
+        backdrop.style.background = hashColor(group[0].title+group[0].author).css;
       }
 
-      var linksHtml = "";
-      var linkDefs = [
-        { key:"linkAmazon", label:"Amazon" },
-        { key:"linkAppleBooks", label:"Apple Books" },
-        { key:"linkLibby", label:"Libby" }
-      ];
-      var hasLinks = book.format !== "physical" && linkDefs.some(function(d){ return book[d.key]; });
+      var html = '<div class="disp-grid">';
+      group.forEach(function(b){
+        var links = bookLinks(b);
+        html +=
+          '<button class="disp-mini" data-id="'+b.id+'" aria-label="View '+esc(b.title)+'">'+
+            '<div class="disp-mini-cover">'+coverInner(b)+
+              (links.length ? '<span class="disp-mini-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3M20 14v3h-3M14 20h7"/></svg></span>' : '')+
+            '</div>'+
+            '<div class="disp-mini-title">'+esc(b.title)+'</div>'+
+            '<div class="disp-mini-author">'+esc(b.author)+'</div>'+
+            (b.rating ? '<div class="disp-mini-stars">'+starsHTML(b.rating)+'</div>' : '')+
+          '</button>';
+      });
+      html += '</div>';
 
-      stage.innerHTML =
+      stage.innerHTML = '<div class="disp-page">'+html+'</div>';
+      stage.querySelectorAll(".disp-mini").forEach(function(el){
+        el.addEventListener("click", function(e){
+          e.stopPropagation();
+          disp.openFeatured(el.getAttribute("data-id"));
+        });
+      });
+
+      this.restartProgress();
+    },
+
+    openFeatured:function(id){
+      var book = this.currentGroup.find(function(b){ return b.id === id; }) || books.find(function(b){ return b.id === id; });
+      if(!book) return;
+      this.featuredId = id;
+      this.paused = true;
+      document.getElementById("dispProgressFill").classList.remove("animating");
+
+      var links = bookLinks(book);
+      var wrap = document.createElement("div");
+      wrap.className = "disp-featured-backdrop";
+      wrap.id = "dispFeatured";
+
+      var card = document.createElement("div");
+      card.className = "disp-featured-card";
+      card.innerHTML =
+        '<button class="disp-featured-close" aria-label="Close">'+
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>'+
+        '</button>'+
         '<div class="disp-cover-wrap">'+
-          '<div class="disp-cover" id="dispCoverBox">'+coverInner(book)+'</div>'+
+          '<div class="disp-cover">'+coverInner(book)+'</div>'+
           '<div class="disp-title">'+esc(book.title)+'</div>'+
           '<div class="disp-author">'+esc(book.author)+'</div>'+
           '<div class="disp-meta">'+
             (book.rating ? starsHTML(book.rating) : '')+
             (book.series ? '<span class="disp-series">'+esc(book.series)+(book.seriesNum?' #'+book.seriesNum:'')+'</span>' : '')+
           '</div>'+
+          (book.genre ? '<div class="disp-featured-genre">'+esc(book.genre)+'</div>' : '')+
+          (book.description ? '<div class="disp-featured-desc clamp">'+esc(book.description)+'</div>' : '')+
         '</div>'+
-        (hasLinks ? '<div class="disp-links" id="dispLinks"></div>' : '');
+        (links.length ? '<div class="disp-links" id="dispFeaturedLinks"></div>' :
+          (book.format !== "physical" ? '<div class="disp-featured-notice">No store link yet for this one.</div>' : ''));
 
-      if(hasLinks){
-        var linksWrap = document.getElementById("dispLinks");
-        linkDefs.forEach(function(d){
-          if(!book[d.key]) return;
-          var col = document.createElement("div");
-          col.className = "disp-link";
-          var qrBox = document.createElement("div");
-          qrBox.className = "disp-qr";
-          col.appendChild(qrBox);
-          var label = document.createElement("div");
-          label.className = "disp-link-label";
-          label.textContent = d.label;
-          col.appendChild(label);
-          linksWrap.appendChild(col);
-          try{
-            new QRCode(qrBox, { text: book[d.key], width:132, height:132, colorDark:"#161310", colorLight:"#ffffff", correctLevel: QRCode.CorrectLevel.M });
-          }catch(e){ console.error("QR generation failed", e); }
-        });
+      wrap.appendChild(card);
+      document.body.appendChild(wrap);
+
+      if(links.length) renderQrColumn(document.getElementById("dispFeaturedLinks"), links);
+
+      function close(){
+        wrap.remove();
+        disp.featuredId = null;
+        disp.paused = false;
+        disp.restartProgress();
+        if(disp.featureTimeout){ clearTimeout(disp.featureTimeout); disp.featureTimeout = null; }
       }
-
-      this.restartProgress();
+      card.querySelector(".disp-featured-close").addEventListener("click", close);
+      wrap.addEventListener("click", function(e){ if(e.target === wrap) close(); });
+      // Safety net so an unattended kiosk doesn't stay stuck on one book if a guest walks away.
+      this.featureTimeout = setTimeout(close, 45000);
     },
 
     restartProgress:function(){
@@ -1961,12 +2128,13 @@
   var dsBackdrop = document.getElementById("displaySettingsBackdrop");
   function openDisplaySettings(){
     document.getElementById("dsInterval").value = displaySettings.interval;
+    document.getElementById("dsGroupSize").value = displaySettings.groupSize;
     document.getElementById("dsIncludePhysical").checked = displaySettings.includePhysical;
     var elig = books.filter(function(b){ return b.format !== "physical"; });
     var withLinks = elig.filter(function(b){ return b.linkAmazon || b.linkAppleBooks || b.linkLibby; });
     document.getElementById("linkCoverageNote").textContent =
-      elig.length ? (withLinks.length + " of " + elig.length + " ebooks/audiobooks have at least one store link saved.") :
-      "No ebooks or audiobooks yet — add some from the library, then paste their store links for QR codes to appear.";
+      elig.length ? (withLinks.length + " of " + elig.length + " ebooks/audiobooks have an exact store link saved — the rest fall back to an Amazon search QR automatically.") :
+      "No ebooks or audiobooks yet — add some from the library to see QR codes here.";
     dsBackdrop.style.display = "flex";
   }
   function closeDisplaySettings(){ dsBackdrop.style.display = "none"; }
@@ -1975,10 +2143,13 @@
   dsBackdrop.addEventListener("click", function(e){ if(e.target === dsBackdrop) closeDisplaySettings(); });
   document.getElementById("saveDisplaySettingsBtn").addEventListener("click", function(){
     var n = parseInt(document.getElementById("dsInterval").value);
-    displaySettings.interval = (isNaN(n) || n < 4) ? 10 : n;
+    displaySettings.interval = (isNaN(n) || n < 8) ? DEFAULT_DISPLAY_SETTINGS.interval : n;
+    var g = parseInt(document.getElementById("dsGroupSize").value);
+    displaySettings.groupSize = (isNaN(g) || g < 1) ? DEFAULT_DISPLAY_SETTINGS.groupSize : Math.min(g, 9);
     displaySettings.includePhysical = document.getElementById("dsIncludePhysical").checked;
     saveDisplaySettings();
     closeDisplaySettings();
+    if(disp.screen === "display") disp.start();
   });
 
   /* ---------------- Init ---------------- */
