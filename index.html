@@ -91,7 +91,7 @@
     background-image: repeating-linear-gradient(90deg, rgba(255,255,255,0.014) 0 1px, transparent 1px 46px);
     pointer-events:none;
   }
-  .hero-corner{ position:absolute; width:30px; height:30px; color:var(--brass); opacity:0.6; pointer-events:none; }
+  .hero-corner{ position:absolute; width:46px; height:46px; color:var(--brass); opacity:0.7; pointer-events:none; }
   .hero-corner svg{ width:100%; height:100%; }
   .hero-corner.tl{ top:18px; left:18px; }
   .hero-corner.tr{ top:18px; right:18px; transform:scaleX(-1); }
@@ -361,14 +361,21 @@
     transition:background-image .6s ease;
   }
   .disp-backdrop.gradient{ filter:none; opacity:0.55; }
-  .disp-overlay{ position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 0%, rgba(6,4,3,0.6) 100%); }
+  .disp-overlay{ position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 0%, rgba(6,4,3,0.6) 100%); animation:candleFlicker 6s ease-in-out infinite; }
+  @keyframes candleFlicker{ 0%,100%{ opacity:1; } 45%{ opacity:0.94; } 52%{ opacity:1; } 78%{ opacity:0.97; } }
+  @media (prefers-reduced-motion: reduce){ .disp-overlay{ animation:none; } }
 
-  .disp-corner{ position:absolute; z-index:3; width:34px; height:34px; opacity:0.8; pointer-events:none; }
+  .disp-corner{ position:absolute; z-index:3; width:58px; height:58px; opacity:0.85; pointer-events:none; }
   .disp-corner svg{ width:100%; height:100%; color:var(--brass); }
-  .disp-corner.tl{ top:26px; left:26px; }
-  .disp-corner.tr{ top:26px; right:26px; transform:scaleX(-1); }
-  .disp-corner.bl{ bottom:26px; left:26px; transform:scaleY(-1); }
-  .disp-corner.br{ bottom:26px; right:26px; transform:scale(-1,-1); }
+  .disp-corner.tl{ top:22px; left:22px; }
+  .disp-corner.tr{ top:22px; right:22px; transform:scaleX(-1); }
+  .disp-corner.bl{ bottom:22px; left:22px; transform:scaleY(-1); }
+  .disp-corner.br{ bottom:22px; right:22px; transform:scale(-1,-1); }
+
+  .disp-seal{ width:64px; height:64px; margin:0 auto 6px; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.35)); }
+
+  .disp-divider{ position:absolute; top:52px; left:90px; width:120px; height:14px; color:var(--brass); opacity:0.5; z-index:2; }
+  .disp-divider svg{ width:100%; height:100%; }
 
   .disp-stage{
     position:relative; z-index:2; height:100%; display:flex; align-items:center; justify-content:center;
@@ -460,7 +467,7 @@
     .disp-page::after{ display:none; }
     .disp-cover{ width:190px; }
     .disp-title{ font-size:22px; }
-    .disp-brand, .disp-pause-hint{ left:24px; right:24px; }
+    .disp-brand, .disp-pause-hint, .disp-divider{ left:24px; right:24px; }
     .disp-progress{ left:24px; right:24px; }
   }
 </style>
@@ -474,11 +481,12 @@
   <div class="disp-backdrop gradient" id="dispBackdrop"></div>
   <div class="disp-overlay"></div>
   <div class="disp-brand">The Shelf</div>
+  <div class="disp-divider" aria-hidden="true"><svg viewBox="0 0 120 14" fill="none" stroke="currentColor" stroke-width="1"><path d="M0 7h44M76 7h44"/><path d="M60 2l5 5-5 5-5-5z" fill="currentColor" stroke="none"/></svg></div>
   <div class="disp-pause-hint">Paused — tap again to resume</div>
-  <div class="disp-corner tl" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
-  <div class="disp-corner tr" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
-  <div class="disp-corner bl" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
-  <div class="disp-corner br" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner tl" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner tr" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner bl" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+  <div class="disp-corner br" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
   <button class="disp-manage-btn" id="dispManageBtn" title="Manage library" aria-label="Manage library">
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
   </button>
@@ -490,8 +498,8 @@
 <div id="manageScreen">
 
 <header class="hero">
-  <div class="hero-corner tl" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
-  <div class="hero-corner tr" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 20V6a4 4 0 0 1 4-4h14"/><circle cx="6" cy="6" r="2.2" fill="currentColor" stroke="none"/></svg></div>
+  <div class="hero-corner tl" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
+  <div class="hero-corner tr" aria-hidden="true"><svg viewBox="0 0 60 60" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M 11.8,11.8 L 16.4,8.9 L 21.4,7.0 L 26.5,6.1 L 31.6,6.1 L 36.4,7.0 L 40.9,8.8 L 44.8,11.3 L 48.0,14.4 L 50.6,18.0 L 52.4,21.8 L 53.4,25.8 L 53.6,29.7 L 53.1,33.5 L 51.9,37.0 L 50.1,40.1 L 47.9,42.7 L 45.3,44.7 L 42.6,46.1 L 39.7,47.0 L 36.8,47.2 L 34.1,46.9 L 31.6,46.1 L 29.5,44.9 L 27.7,43.4 L 26.4,41.6 L 25.5,39.8 L 25.0,37.9 L 25.0,36.1 L 25.3,34.4 L 25.9,33.0 L 26.8,31.8 L 27.8,31.0 L 28.9,30.5 L 30.0,30.3 L 31.0,30.4 L 31.9,30.8"/><circle cx="31.9" cy="30.8" r="2.6" fill="currentColor" stroke="none"/><circle cx="11.8" cy="11.8" r="1.8" fill="currentColor" stroke="none"/></svg></div>
   <div class="hero-inner">
     <div>
       <div class="hero-top">
@@ -1831,7 +1839,17 @@
       if(!book){
         stage.innerHTML = '<div class="disp-page disp-page-empty">'+
           '<div class="disp-empty">'+
-            '<svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h7a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-7a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h8z"/></svg>'+
+            '<div class="disp-seal">'+
+              '<svg viewBox="0 0 64 64">'+
+                '<defs><radialGradient id="sealGrad" cx="35%" cy="30%" r="75%">'+
+                  '<stop offset="0%" stop-color="#EAC66C"/><stop offset="55%" stop-color="#C6963A"/><stop offset="100%" stop-color="#8B6A2E"/>'+
+                '</radialGradient></defs>'+
+                '<circle cx="32" cy="32" r="29" fill="url(#sealGrad)" stroke="#3A2712" stroke-width="1.5"/>'+
+                '<circle cx="32" cy="32" r="23" fill="none" stroke="#5B4018" stroke-width="1" stroke-dasharray="1.5 3.5"/>'+
+                '<path d="M18 22 L32 17 L46 22 L46 44 L32 39 L18 44 Z" fill="#3A2712" opacity="0.82"/>'+
+                '<line x1="32" y1="17" x2="32" y2="39" stroke="#EAC66C" stroke-width="1" opacity="0.7"/>'+
+              '</svg>'+
+            '</div>'+
             '<h3>The shelf is empty</h3><p>Add some books from Manage to get started &mdash; they will appear here once there is something to show.</p>'+
           '</div>'+
         '</div>';
