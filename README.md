@@ -2,6 +2,21 @@
 
 A library catalog for your (and your wife's) books, ebooks, and audiobooks. One `index.html` file — no build step, no framework, no backend required.
 
+## Display screen (new)
+
+Loading the page with no URL parameters now shows the **display screen** by default — this is meant for a monitor or tablet you leave running in the library. It auto-rotates through random covers from your collection every few seconds, with a blurred-cover backdrop, and shows QR codes for any ebook/audiobook that has a store link saved (see below).
+
+- Click/tap the screen to pause on the current book; click again to resume.
+- The small gear icon in the bottom-right corner opens the full management interface (search, add, edit, sort, etc.) — click "Back to display" there to return to the kiosk view.
+- Bookmark `index.html?manage=1` on your own devices to jump straight into management instead of the display.
+- **Display settings** (in Manage) lets you set how many seconds each book stays up, and whether physical books are included in the rotation (they never get QR codes, just cover art).
+
+### Store links & QR codes
+
+Add a book's real Amazon (Kindle or Audible), Apple Books, or Libby product link when editing it, and the display screen will generate a QR code for each one. Scanning it opens that exact page — if you own the book on the account signed into that app, it opens straight to reading/listening; if not, it shows the buy page. That behavior comes from the store apps themselves, so getting the exact right link matters more than getting *a* link — a "Search Amazon ↗" / "Search Apple Books ↗" helper is included in the edit form to make finding it faster, but there's no reliable way to auto-generate the exact product URL from an ISBN, so these are pasted in by hand.
+
+For Libby, there's no public search link — open the title in the Libby app, tap Share, and copy the link it gives you.
+
 ## Features
 
 - **Add by ISBN** — paste an ISBN-10/13 and it pulls title, author, cover, page count, year, and genre from Google Books (falling back to Open Library). Edit anything before saving, or skip the lookup and enter a book by hand.

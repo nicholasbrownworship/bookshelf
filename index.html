@@ -296,6 +296,8 @@
   textarea{ resize:vertical; min-height:64px; }
   input:focus, textarea:focus, select:focus{ border-color:var(--brass); }
   .hint{ font-size:11.5px; color:var(--ink-mute); margin-top:5px; line-height:1.5; }
+  .hint a{ color:var(--brass); text-decoration:none; }
+  .hint a:hover{ text-decoration:underline; }
 
   .rating-input{ display:flex; gap:4px; }
   .rating-input button{ background:none; border:none; cursor:pointer; padding:2px; color:var(--ink-mute); }
@@ -332,9 +334,97 @@
   footer.page-foot a{ color:var(--brass); text-decoration:none; }
 
   .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+  /* ---------- Display (kiosk) screen ---------- */
+  #displayScreen{
+    position:fixed; inset:0; background:#0C0A08; overflow:hidden; display:none;
+  }
+  #displayScreen.active{ display:block; }
+  #manageScreen{ display:none; }
+  .disp-backdrop{
+    position:absolute; inset:-40px; background-size:cover; background-position:center;
+    filter:blur(38px) brightness(0.42) saturate(1.1); transform:scale(1.15);
+    transition:background-image .6s ease;
+  }
+  .disp-backdrop.gradient{ filter:none; }
+  .disp-overlay{ position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 0%, rgba(10,8,6,0.55) 100%); }
+  .disp-stage{
+    position:relative; z-index:2; height:100%; display:flex; align-items:center; justify-content:center; gap:64px;
+    padding:60px; flex-wrap:wrap;
+  }
+  .disp-cover-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; max-width:420px; }
+  .disp-cover{
+    width:300px; aspect-ratio:2/3; border-radius:10px; overflow:hidden; box-shadow:0 40px 90px -20px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06);
+    animation:dispIn .7s ease both;
+  }
+  .disp-cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .disp-cover .cover-fallback{ padding:26px 22px; }
+  .disp-cover .cf-title{ font-size:22px; -webkit-line-clamp:6; }
+  .disp-cover .cf-author{ font-size:13px; }
+  .disp-title{ font-family:var(--font-display); font-weight:600; font-size:30px; color:var(--ink); margin:26px 0 4px; line-height:1.15; animation:dispIn .7s ease .05s both; }
+  .disp-author{ font-size:15px; color:var(--ink-dim); animation:dispIn .7s ease .1s both; }
+  .disp-meta{ display:flex; gap:10px; align-items:center; margin-top:14px; animation:dispIn .7s ease .15s both; }
+  .disp-meta .stars svg{ width:16px; height:16px; }
+  .disp-series{ font-family:var(--font-mono); font-size:12px; color:var(--ink-mute); border:1px solid rgba(255,255,255,0.14); padding:3px 9px; border-radius:5px; }
+
+  @keyframes dispIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+
+  .disp-links{ display:flex; gap:22px; flex-wrap:wrap; justify-content:center; animation:dispIn .7s ease .2s both; }
+  .disp-link{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .disp-qr{ background:#fff; padding:12px; border-radius:12px; box-shadow:0 14px 30px -10px rgba(0,0,0,0.5); }
+  .disp-qr canvas, .disp-qr img{ display:block; }
+  .disp-link-label{ font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-dim); background:rgba(255,255,255,0.06); padding:4px 10px; border-radius:999px; }
+
+  .disp-progress{ position:absolute; left:60px; right:60px; bottom:34px; height:3px; background:rgba(255,255,255,0.12); border-radius:2px; overflow:hidden; z-index:2; }
+  .disp-progress-fill{ height:100%; background:var(--brass-bright); width:0%; }
+  .disp-progress-fill.animating{ animation-name:dispProgress; animation-timing-function:linear; animation-fill-mode:forwards; }
+  @keyframes dispProgress{ from{ width:0%; } to{ width:100%; } }
+
+  .disp-brand{ position:absolute; top:30px; left:60px; z-index:2; font-family:var(--font-mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:rgba(238,227,206,0.5); }
+  .disp-pause-hint{
+    position:absolute; top:30px; right:60px; z-index:2; font-family:var(--font-mono); font-size:11px;
+    color:rgba(238,227,206,0.4); opacity:0; transition:opacity .3s ease;
+  }
+  #displayScreen.paused .disp-pause-hint{ opacity:1; }
+
+  .disp-manage-btn{
+    position:absolute; bottom:26px; right:30px; z-index:3; width:38px; height:38px; border-radius:50%;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:rgba(238,227,206,0.55);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .disp-manage-btn:hover{ background:rgba(255,255,255,0.14); color:var(--ink); }
+
+  .disp-empty{ position:relative; z-index:2; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--ink-mute); text-align:center; padding:40px; }
+  .disp-empty h3{ font-family:var(--font-display); color:var(--ink); font-size:24px; margin:14px 0 6px; }
+
+  .manage-return-btn{ display:flex; align-items:center; gap:6px; }
+
+  @media (max-width:900px){
+    .disp-stage{ flex-direction:column; gap:32px; padding:30px 20px 90px; }
+    .disp-cover{ width:220px; }
+    .disp-title{ font-size:24px; }
+    .disp-brand, .disp-pause-hint{ left:24px; right:24px; }
+    .disp-progress{ left:24px; right:24px; }
+  }
 </style>
 </head>
 <body>
+
+<!-- ============== DISPLAY (KIOSK) SCREEN — this is the default view ============== -->
+<div id="displayScreen">
+  <div class="disp-backdrop gradient" id="dispBackdrop"></div>
+  <div class="disp-overlay"></div>
+  <div class="disp-brand">The Shelf</div>
+  <div class="disp-pause-hint">Paused — tap again to resume</div>
+  <button class="disp-manage-btn" id="dispManageBtn" title="Manage library" aria-label="Manage library">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 0 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+  </button>
+  <div class="disp-progress"><div class="disp-progress-fill" id="dispProgressFill"></div></div>
+  <div class="disp-stage" id="dispStage"><!-- populated by JS --></div>
+</div>
+
+<!-- ============== MANAGE SCREEN — the editable library ============== -->
+<div id="manageScreen">
 
 <header class="hero">
   <div class="hero-inner">
@@ -344,10 +434,20 @@
       </div>
       <h1 class="hero-title">The <em>Shelf</em></h1>
       <p class="hero-sub">Every book, ebook, and audiobook we own or want &mdash; in one place, sorted however you like.</p>
-      <button class="sync-btn" id="syncBtn" style="margin-top:14px;">
-        <span class="sync-dot" id="syncDot"></span>
-        <span id="syncLabel">Local only — set up sync</span>
-      </button>
+      <div style="display:flex; gap:8px; margin-top:14px; flex-wrap:wrap;">
+        <button class="sync-btn" id="syncBtn">
+          <span class="sync-dot" id="syncDot"></span>
+          <span id="syncLabel">Local only — set up sync</span>
+        </button>
+        <button class="sync-btn manage-return-btn" id="backToDisplayBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          Back to display
+        </button>
+        <button class="sync-btn" id="displaySettingsBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+          Display settings
+        </button>
+      </div>
     </div>
     <div class="stat-row">
       <div class="stat"><div class="n" id="statTotal">0</div><div class="l">Books</div></div>
@@ -431,6 +531,8 @@
 <footer class="page-foot">
   <span id="storageFootNote">Stored locally in this browser &middot; use <strong>Export</strong> to back up your library</span>
 </footer>
+
+</div><!-- /#manageScreen -->
 
 <!-- Add/Edit Book Modal -->
 <div class="modal-backdrop" id="modalBackdrop" style="display:none;">
@@ -527,6 +629,26 @@
           </div>
 
           <hr class="section-divider">
+          <div class="full" id="storeLinksBox">
+            <label style="margin-bottom:10px;">Store links (for the display screen's QR codes)</label>
+            <div class="hint" style="margin-top:0; margin-bottom:10px;">
+              Paste the exact product page for this edition — opening it in the store app will show "Buy" if you don't own it, or "Read/Listen Now" if you do, on whichever account is signed in. A guessed link can land on the wrong edition, so it's worth getting the real one.
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div>
+                <input type="url" id="fLinkAmazon" placeholder="Amazon (Kindle or Audible) product URL">
+                <div class="hint"><a href="#" class="disp-search-link" data-store="amazon">Search Amazon ↗</a></div>
+              </div>
+              <div>
+                <input type="url" id="fLinkAppleBooks" placeholder="Apple Books product URL">
+                <div class="hint"><a href="#" class="disp-search-link" data-store="apple">Search Apple Books ↗</a></div>
+              </div>
+              <div>
+                <input type="url" id="fLinkLibby" placeholder="Libby share link">
+                <div class="hint">In the Libby app, open the title → Share → Copy Link. <a href="#" class="disp-search-link" data-store="libby">Search the web for it ↗</a></div>
+              </div>
+            </div>
+          </div>
           <div class="full lend-box" id="lendBox">
             <label style="margin-bottom:10px;">Lending</label>
             <div id="lendFormRow" style="display:flex; gap:10px;">
@@ -659,6 +781,38 @@
   </div>
 </div>
 
+<!-- Display Settings Modal -->
+<div class="modal-backdrop" id="displaySettingsBackdrop" style="display:none;">
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="dsTitle">
+    <div class="modal-head">
+      <h2 id="dsTitle">Display settings</h2>
+      <button class="icon-btn" id="closeDisplaySettingsBtn" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px;">
+        <label for="dsInterval">Seconds per book</label>
+        <input type="number" id="dsInterval" min="4" max="120" step="1">
+      </div>
+      <div style="margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="dsIncludePhysical" style="width:auto;">
+        <label for="dsIncludePhysical" style="margin-bottom:0;">Include physical books in the rotation</label>
+      </div>
+      <div class="hint" style="margin-bottom:16px;">Physical books show cover art only — QR codes only appear for ebooks/audiobooks that have a store link saved.</div>
+
+      <div class="sync-status-box" id="linkCoverageNote"></div>
+
+      <div class="modal-foot">
+        <div class="foot-actions" style="margin-left:auto;">
+          <button type="button" class="btn btn-primary" id="saveDisplaySettingsBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1032,6 +1186,9 @@
       document.getElementById("fIsbn").value = book.isbn || "";
       document.getElementById("fCover").value = book.coverUrl || "";
       document.getElementById("fTags").value = (book.tags||[]).join(", ");
+      document.getElementById("fLinkAmazon").value = book.linkAmazon || "";
+      document.getElementById("fLinkAppleBooks").value = book.linkAppleBooks || "";
+      document.getElementById("fLinkLibby").value = book.linkLibby || "";
       document.getElementById("fNotes").value = book.notes || "";
       currentRating = book.rating || 0;
       currentLentTo = book.lentTo || null;
@@ -1051,9 +1208,13 @@
   backdrop.addEventListener("click", function(e){ if(e.target === backdrop) closeModal(); });
   document.addEventListener("keydown", function(e){
     if(e.key !== "Escape") return;
+    var dsOpen = document.getElementById("displaySettingsBackdrop").style.display === "flex";
+    var anyModalWasOpen = backdrop.style.display === "flex" || bulkBackdrop.style.display === "flex" || syncBackdrop.style.display === "flex" || dsOpen;
     if(backdrop.style.display === "flex") closeModal();
     if(bulkBackdrop.style.display === "flex") closeBulk();
     if(syncBackdrop.style.display === "flex") closeSync();
+    if(dsOpen) closeDisplaySettings();
+    if(!anyModalWasOpen && disp.screen === "manage") switchScreen("display");
   });
 
   form.addEventListener("submit", function(e){
@@ -1084,6 +1245,9 @@
       isbn: document.getElementById("fIsbn").value.trim(),
       coverUrl: document.getElementById("fCover").value.trim(),
       tags: parseTags(document.getElementById("fTags").value),
+      linkAmazon: document.getElementById("fLinkAmazon").value.trim(),
+      linkAppleBooks: document.getElementById("fLinkAppleBooks").value.trim(),
+      linkLibby: document.getElementById("fLinkLibby").value.trim(),
       lentTo: lentToVal,
       lentDate: lentDateVal,
       notes: document.getElementById("fNotes").value.trim(),
@@ -1198,6 +1362,21 @@
       document.getElementById("fIsbn").value = isbn;
     }
   }
+
+  document.querySelectorAll(".disp-search-link").forEach(function(a){
+    a.addEventListener("click", function(e){
+      e.preventDefault();
+      var title = document.getElementById("fTitle").value.trim();
+      var author = document.getElementById("fAuthor").value.trim();
+      if(!title){ alert("Enter a title first."); return; }
+      var q = encodeURIComponent(title + " " + author);
+      var store = a.getAttribute("data-store");
+      var url = store === "amazon" ? "https://www.google.com/search?q=" + q + "+site:amazon.com"
+              : store === "apple" ? "https://www.google.com/search?q=" + q + "+site:books.apple.com"
+              : "https://www.google.com/search?q=" + q + "+libby+OR+overdrive";
+      window.open(url, "_blank", "noopener");
+    });
+  });
 
   document.getElementById("isbnLookupBtn").addEventListener("click", lookupISBN);
   document.getElementById("isbnLookupInput").addEventListener("keydown", function(e){
@@ -1537,8 +1716,175 @@
     }catch(e){ /* ignore malformed settings */ }
   })();
 
+  /* ================= Display (kiosk) screen ================= */
+  var DISPLAY_SETTINGS_KEY = "theshelf.displaysettings.v1";
+  function loadDisplaySettings(){
+    try{
+      var raw = localStorage.getItem(DISPLAY_SETTINGS_KEY);
+      return raw ? JSON.parse(raw) : { interval:10, includePhysical:true };
+    }catch(e){ return { interval:10, includePhysical:true }; }
+  }
+  var displaySettings = loadDisplaySettings();
+  function saveDisplaySettings(){ localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(displaySettings)); }
+
+  var disp = {
+    timer:null, progressEl:null, paused:false, lastId:null, screen:"display",
+
+    eligibleBooks:function(){
+      return displaySettings.includePhysical ? books.slice() : books.filter(function(b){ return b.format !== "physical"; });
+    },
+
+    pickNext:function(){
+      var pool = this.eligibleBooks();
+      if(!pool.length) return null;
+      if(pool.length === 1) return pool[0];
+      var candidate;
+      do{ candidate = pool[Math.floor(Math.random()*pool.length)]; } while(candidate.id === this.lastId);
+      return candidate;
+    },
+
+    show:function(){
+      var stage = document.getElementById("dispStage");
+      var backdrop = document.getElementById("dispBackdrop");
+      var book = this.pickNext();
+
+      if(!book){
+        stage.innerHTML = '<div class="disp-empty">'+
+          '<svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h7a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-7a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h8z"/></svg>'+
+          '<h3>The shelf is empty</h3><p>Add some books from Manage to get started.</p>'+
+        '</div>';
+        backdrop.className = "disp-backdrop gradient";
+        backdrop.style.background = "";
+        return;
+      }
+      this.lastId = book.id;
+
+      if(book.coverUrl){
+        backdrop.className = "disp-backdrop";
+        backdrop.style.backgroundImage = "url('"+book.coverUrl.replace(/'/g,"")+"')";
+      } else {
+        backdrop.className = "disp-backdrop gradient";
+        backdrop.style.background = hashColor(book.title+book.author).css;
+      }
+
+      var linksHtml = "";
+      var linkDefs = [
+        { key:"linkAmazon", label:"Amazon" },
+        { key:"linkAppleBooks", label:"Apple Books" },
+        { key:"linkLibby", label:"Libby" }
+      ];
+      var hasLinks = book.format !== "physical" && linkDefs.some(function(d){ return book[d.key]; });
+
+      stage.innerHTML =
+        '<div class="disp-cover-wrap">'+
+          '<div class="disp-cover" id="dispCoverBox">'+coverInner(book)+'</div>'+
+          '<div class="disp-title">'+esc(book.title)+'</div>'+
+          '<div class="disp-author">'+esc(book.author)+'</div>'+
+          '<div class="disp-meta">'+
+            (book.rating ? starsHTML(book.rating) : '')+
+            (book.series ? '<span class="disp-series">'+esc(book.series)+(book.seriesNum?' #'+book.seriesNum:'')+'</span>' : '')+
+          '</div>'+
+        '</div>'+
+        (hasLinks ? '<div class="disp-links" id="dispLinks"></div>' : '');
+
+      if(hasLinks){
+        var linksWrap = document.getElementById("dispLinks");
+        linkDefs.forEach(function(d){
+          if(!book[d.key]) return;
+          var col = document.createElement("div");
+          col.className = "disp-link";
+          var qrBox = document.createElement("div");
+          qrBox.className = "disp-qr";
+          col.appendChild(qrBox);
+          var label = document.createElement("div");
+          label.className = "disp-link-label";
+          label.textContent = d.label;
+          col.appendChild(label);
+          linksWrap.appendChild(col);
+          try{
+            new QRCode(qrBox, { text: book[d.key], width:132, height:132, colorDark:"#161310", colorLight:"#ffffff", correctLevel: QRCode.CorrectLevel.M });
+          }catch(e){ console.error("QR generation failed", e); }
+        });
+      }
+
+      this.restartProgress();
+    },
+
+    restartProgress:function(){
+      var fill = document.getElementById("dispProgressFill");
+      fill.classList.remove("animating");
+      fill.style.width = "0%";
+      void fill.offsetWidth; // reflow to restart animation
+      fill.style.animationDuration = displaySettings.interval + "s";
+      if(!this.paused) fill.classList.add("animating");
+    },
+
+    start:function(){
+      var self = this;
+      this.show();
+      this.stop();
+      this.timer = setInterval(function(){ if(!self.paused) self.show(); }, displaySettings.interval*1000);
+    },
+    stop:function(){ if(this.timer) clearInterval(this.timer); this.timer = null; },
+
+    togglePause:function(){
+      this.paused = !this.paused;
+      document.getElementById("displayScreen").classList.toggle("paused", this.paused);
+      var fill = document.getElementById("dispProgressFill");
+      if(this.paused){ fill.classList.remove("animating"); }
+      else { this.restartProgress(); }
+    }
+  };
+
+  document.getElementById("displayScreen").addEventListener("click", function(e){
+    if(e.target.closest(".disp-manage-btn")) return;
+    disp.togglePause();
+  });
+  document.getElementById("dispManageBtn").addEventListener("click", function(e){
+    e.stopPropagation();
+    switchScreen("manage");
+  });
+  document.getElementById("backToDisplayBtn").addEventListener("click", function(){ switchScreen("display"); });
+
+  function switchScreen(name){
+    disp.screen = name;
+    document.getElementById("displayScreen").classList.toggle("active", name === "display");
+    document.getElementById("manageScreen").style.display = name === "manage" ? "block" : "none";
+    var url = new URL(window.location.href);
+    if(name === "manage") url.searchParams.set("manage","1"); else url.searchParams.delete("manage");
+    window.history.replaceState({}, "", url);
+    if(name === "display"){ disp.paused = false; document.getElementById("displayScreen").classList.remove("paused"); disp.start(); }
+    else { disp.stop(); render(); }
+  }
+
+  /* ---------------- Display settings modal ---------------- */
+  var dsBackdrop = document.getElementById("displaySettingsBackdrop");
+  function openDisplaySettings(){
+    document.getElementById("dsInterval").value = displaySettings.interval;
+    document.getElementById("dsIncludePhysical").checked = displaySettings.includePhysical;
+    var elig = books.filter(function(b){ return b.format !== "physical"; });
+    var withLinks = elig.filter(function(b){ return b.linkAmazon || b.linkAppleBooks || b.linkLibby; });
+    document.getElementById("linkCoverageNote").textContent =
+      elig.length ? (withLinks.length + " of " + elig.length + " ebooks/audiobooks have at least one store link saved.") :
+      "No ebooks or audiobooks yet — add some from the library, then paste their store links for QR codes to appear.";
+    dsBackdrop.style.display = "flex";
+  }
+  function closeDisplaySettings(){ dsBackdrop.style.display = "none"; }
+  document.getElementById("displaySettingsBtn").addEventListener("click", openDisplaySettings);
+  document.getElementById("closeDisplaySettingsBtn").addEventListener("click", closeDisplaySettings);
+  dsBackdrop.addEventListener("click", function(e){ if(e.target === dsBackdrop) closeDisplaySettings(); });
+  document.getElementById("saveDisplaySettingsBtn").addEventListener("click", function(){
+    var n = parseInt(document.getElementById("dsInterval").value);
+    displaySettings.interval = (isNaN(n) || n < 4) ? 10 : n;
+    displaySettings.includePhysical = document.getElementById("dsIncludePhysical").checked;
+    saveDisplaySettings();
+    closeDisplaySettings();
+  });
+
   /* ---------------- Init ---------------- */
   render();
+  var startInManage = new URLSearchParams(window.location.search).get("manage") === "1";
+  switchScreen(startInManage ? "manage" : "display");
 })();
 </script>
 </body>
