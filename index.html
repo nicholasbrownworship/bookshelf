@@ -425,15 +425,15 @@
 
   @keyframes dispIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
 
-  .disp-links{ position:relative; z-index:1; display:flex; flex-direction:column; gap:22px; align-items:center; animation:dispIn .7s ease .2s both; padding-left:8px; }
-  .disp-link{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .disp-links{ position:relative; z-index:1; display:flex; flex-direction:row; flex-wrap:wrap; gap:16px; justify-content:center; animation:dispIn .7s ease .2s both; margin-top:20px; }
+  .disp-link{ display:flex; flex-direction:column; align-items:center; gap:6px; }
   .disp-qr{
-    background:#F4F6FA; padding:10px; border-radius:4px;
-    box-shadow:0 12px 30px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(95,227,211,0.4), 0 0 24px -4px rgba(95,227,211,0.3);
+    background:#F4F6FA; padding:8px; border-radius:4px;
+    box-shadow:0 10px 24px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(95,227,211,0.4), 0 0 20px -4px rgba(95,227,211,0.3);
   }
-  .disp-qr canvas, .disp-qr img{ display:block; }
-  .disp-link-label{ font-family:var(--font-display-2); font-style:italic; font-weight:600; font-size:13.5px; color:var(--ink-dim); }
-  .disp-link-label .search-tag{ font-family:var(--font-mono); font-size:9.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-mute); font-style:normal; display:block; }
+  .disp-qr canvas, .disp-qr img{ display:block; width:100px; height:100px; }
+  .disp-link-label{ font-family:var(--font-display-2); font-style:italic; font-weight:600; font-size:12px; color:var(--ink-dim); }
+  .disp-link-label .search-tag{ font-family:var(--font-mono); font-size:9px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-mute); font-style:normal; display:block; }
 
   /* ---- Multi-book grid (default kiosk view) ---- */
   .disp-grid{ position:relative; z-index:1; display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:38px 34px; width:100%; }
@@ -466,7 +466,7 @@
   .disp-mini-stars{ margin-top:5px; color:var(--brass-bright); }
   .disp-mini-stars svg{ width:10px; height:10px; }
 
-  /* ---- Featured single-book overlay ---- */
+  /* ---- Featured single-book overlay: cover+QR on the left, blurb on the right ---- */
   .disp-featured-backdrop{
     position:fixed; inset:0; z-index:50; background:rgba(4,5,14,0.82); backdrop-filter:blur(5px);
     display:flex; align-items:center; justify-content:center; padding:40px;
@@ -474,7 +474,8 @@
   }
   @keyframes fadeInDisp{ from{ opacity:0; } to{ opacity:1; } }
   .disp-featured-card{
-    position:relative; max-width:840px; width:100%; max-height:88vh; overflow-y:auto;
+    position:relative; max-width:980px; width:100%; max-height:88vh;
+    display:flex; flex-direction:column;
     background:
       radial-gradient(ellipse at 25% 15%, rgba(95,227,211,0.07), transparent 55%),
       linear-gradient(160deg, #171B38 0%, #10132A 100%);
@@ -482,10 +483,10 @@
     box-shadow:
       0 0 0 1px rgba(95,227,211,0.35), 0 0 60px -10px rgba(95,227,211,0.15),
       0 50px 100px -25px rgba(0,0,0,0.9);
-    padding:52px 56px;
+    padding:48px 52px;
     animation:pageIn .3s cubic-bezier(.2,.8,.3,1) both;
   }
-  .disp-featured-top{ display:flex; gap:44px; flex-wrap:wrap; justify-content:center; align-items:flex-start; }
+  .disp-featured-top{ display:flex; gap:44px; flex:1 1 auto; min-height:0; }
   .disp-featured-close{
     position:absolute; top:16px; right:16px; width:38px; height:38px; border-radius:50%;
     background:rgba(95,227,211,0.1); border:1px solid rgba(95,227,211,0.25); display:flex; align-items:center; justify-content:center;
@@ -493,12 +494,19 @@
   }
   .disp-featured-close:hover{ background:rgba(95,227,211,0.18); color:var(--ink); }
   .disp-featured-genre{ font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; color:var(--ink-mute); margin-top:10px; }
-  .disp-featured-desc-wrap{ margin-top:28px; padding-top:24px; border-top:1px solid rgba(95,227,211,0.15); }
-  .disp-featured-desc{ font-family:var(--font-body); font-size:15px; line-height:1.75; color:var(--ink-dim); text-align:left; max-width:66ch; }
-  .disp-featured-notice{ font-family:var(--font-display-2); font-style:italic; font-size:12.5px; color:var(--ink-mute); margin-top:14px; }
+  .disp-featured-left{ flex:0 0 auto; width:260px; min-height:0; overflow-y:auto; }
+  .disp-featured-right{ flex:1 1 auto; min-width:0; min-height:0; border-left:1px solid rgba(95,227,211,0.15); padding-left:40px; overflow-y:auto; display:flex; align-items:center; }
+  .disp-featured-desc{ font-family:var(--font-body); font-size:15px; line-height:1.75; color:var(--ink-dim); text-align:left; }
+  .disp-featured-notice{ font-family:var(--font-display-2); font-style:italic; font-size:13px; color:var(--ink-mute); }
+
+  @media (max-width:820px){
+    .disp-featured-card{ padding:32px 24px; max-height:92vh; }
+    .disp-featured-top{ flex-direction:column; overflow-y:auto; }
+    .disp-featured-left{ width:100%; overflow-y:visible; }
+    .disp-featured-right{ border-left:none; border-top:1px solid rgba(95,227,211,0.15); padding-left:0; padding-top:24px; margin-top:24px; overflow-y:visible; }
+  }
 
   @media (max-width:900px){
-    .disp-featured-card{ padding:40px 26px; gap:28px; }
     .disp-silhouette.left{ width:38vw; }
     .disp-silhouette.right{ width:42vw; }
   }
@@ -2153,7 +2161,7 @@
       col.appendChild(label);
       container.appendChild(col);
       try{
-        new QRCode(qrBox, { text:l.url, width:132, height:132, colorDark:"#0A0D1F", colorLight:"#F4F6FA", correctLevel:QRCode.CorrectLevel.M });
+        new QRCode(qrBox, { text:l.url, width:100, height:100, colorDark:"#0A0D1F", colorLight:"#F4F6FA", correctLevel:QRCode.CorrectLevel.M });
       }catch(e){ console.error("QR generation failed", e); }
     });
   }
@@ -2267,20 +2275,25 @@
           '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>'+
         '</button>'+
         '<div class="disp-featured-top">'+
-          '<div class="disp-cover-wrap">'+
-            '<div class="disp-cover">'+coverInner(book)+'</div>'+
-            '<div class="disp-title">'+esc(book.title)+'</div>'+
-            '<div class="disp-author">'+esc(book.author)+'</div>'+
-            '<div class="disp-meta">'+
-              (book.rating ? starsHTML(book.rating) : '')+
-              (book.series ? '<span class="disp-series">'+esc(book.series)+(book.seriesNum?' #'+book.seriesNum:'')+'</span>' : '')+
+          '<div class="disp-featured-left">'+
+            '<div class="disp-cover-wrap">'+
+              '<div class="disp-cover">'+coverInner(book)+'</div>'+
+              '<div class="disp-title">'+esc(book.title)+'</div>'+
+              '<div class="disp-author">'+esc(book.author)+'</div>'+
+              '<div class="disp-meta">'+
+                (book.rating ? starsHTML(book.rating) : '')+
+                (book.series ? '<span class="disp-series">'+esc(book.series)+(book.seriesNum?' #'+book.seriesNum:'')+'</span>' : '')+
+              '</div>'+
+              (book.genre ? '<div class="disp-featured-genre">'+esc(book.genre)+'</div>' : '')+
             '</div>'+
-            (book.genre ? '<div class="disp-featured-genre">'+esc(book.genre)+'</div>' : '')+
+            (links.length ? '<div class="disp-links" id="dispFeaturedLinks"></div>' :
+              (book.format !== "physical" ? '<div class="disp-featured-notice">No store link yet for this one.</div>' : ''))+
           '</div>'+
-          (links.length ? '<div class="disp-links" id="dispFeaturedLinks"></div>' :
-            (book.format !== "physical" ? '<div class="disp-featured-notice">No store link yet for this one.</div>' : ''))+
-        '</div>'+
-        (book.description ? '<div class="disp-featured-desc-wrap"><div class="disp-featured-desc">'+esc(book.description)+'</div></div>' : '');
+          '<div class="disp-featured-right">'+
+            (book.description ? '<div class="disp-featured-desc">'+esc(book.description)+'</div>' :
+              '<div class="disp-featured-notice">No blurb saved for this one yet.</div>')+
+          '</div>'+
+        '</div>';
 
       wrap.appendChild(card);
       document.body.appendChild(wrap);
