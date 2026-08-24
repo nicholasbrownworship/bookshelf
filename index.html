@@ -559,6 +559,7 @@
     </div>
 
     <button class="btn" id="bulkImportBtn" title="Add several books at once by ISBN">Bulk ISBN</button>
+    <button class="btn" id="goodreadsImportBtn" title="Import a Goodreads or StoryGraph CSV export">Goodreads/StoryGraph</button>
     <button class="btn btn-primary" id="addBookBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
       Add book
@@ -748,6 +749,59 @@
         <div class="foot-actions" style="margin-left:auto;">
           <button type="button" class="btn btn-ghost" id="bulkCloseBtn2">Close</button>
           <button type="button" class="btn btn-primary" id="bulkStartBtn">Start import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Goodreads / StoryGraph Import Modal -->
+<div class="modal-backdrop" id="grBackdrop" style="display:none;">
+  <div class="modal narrow" role="dialog" aria-modal="true" aria-labelledby="grTitle">
+    <div class="modal-head">
+      <h2 id="grTitle">Import from Goodreads / StoryGraph</h2>
+      <button class="icon-btn" id="closeGrBtn" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="hint" style="margin-top:0; margin-bottom:14px;">
+        <strong>Goodreads:</strong> My Books → Import and Export (left sidebar, under Tools) → Export Library → download the CSV.<br>
+        <strong>StoryGraph:</strong> Settings → Manage Your Account → Export StoryGraph Library.
+      </div>
+
+      <label for="grFile">CSV file</label>
+      <input type="file" id="grFile" accept=".csv,text/csv">
+
+      <div style="margin-top:16px;">
+        <label for="grOwner">Import these as</label>
+        <select class="field" id="grOwner">
+          <option value="shared">Shared</option>
+          <option value="mine">Mine</option>
+          <option value="wife">Wife's</option>
+        </select>
+      </div>
+
+      <div style="margin-top:14px; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="grFetchCovers" style="width:auto;">
+        <label for="grFetchCovers" style="margin-bottom:0;">Fetch cover art by ISBN (slower — one request per book)</label>
+      </div>
+      <div style="margin-top:10px; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="grSkipDupes" checked style="width:auto;">
+        <label for="grSkipDupes" style="margin-bottom:0;">Skip books already in your library</label>
+      </div>
+
+      <div class="hint" style="margin-top:12px;">
+        Ratings, shelves (as tags), read/want/reading status, and dates all come straight from the file — no lookups needed for those. Format (physical/ebook/audiobook) is guessed from the "Binding" column and can be off for a few titles; worth a glance after importing.
+      </div>
+
+      <div class="bulk-progress" id="grProgress" style="display:none;"></div>
+      <div class="bulk-log" id="grLog" style="display:none;"></div>
+
+      <div class="modal-foot">
+        <div class="foot-actions" style="margin-left:auto;">
+          <button type="button" class="btn btn-ghost" id="grCloseBtn2">Close</button>
+          <button type="button" class="btn btn-primary" id="grStartBtn">Start import</button>
         </div>
       </div>
     </div>
@@ -1179,10 +1233,12 @@
   document.addEventListener("keydown", function(e){
     if(e.key !== "Escape") return;
     var dsOpen = document.getElementById("displaySettingsBackdrop").style.display === "flex";
-    var anyModalWasOpen = backdrop.style.display === "flex" || bulkBackdrop.style.display === "flex" || dsOpen;
+    var grOpen = document.getElementById("grBackdrop").style.display === "flex";
+    var anyModalWasOpen = backdrop.style.display === "flex" || bulkBackdrop.style.display === "flex" || dsOpen || grOpen;
     if(backdrop.style.display === "flex") closeModal();
     if(bulkBackdrop.style.display === "flex") closeBulk();
     if(dsOpen) closeDisplaySettings();
+    if(grOpen) closeGr();
     if(!anyModalWasOpen && disp.screen === "manage") switchScreen("display");
   });
 
@@ -1432,6 +1488,201 @@
     }
 
     progressEl.textContent = "Done — " + okCount + " added, " + failCount + " failed.";
+    btn.disabled = false;
+  });
+
+  /* ---------------- Goodreads / StoryGraph CSV import ---------------- */
+  var grBackdrop = document.getElementById("grBackdrop");
+  function openGr(){ grBackdrop.style.display = "flex"; }
+  function closeGr(){ grBackdrop.style.display = "none"; }
+  document.getElementById("goodreadsImportBtn").addEventListener("click", openGr);
+  document.getElementById("closeGrBtn").addEventListener("click", closeGr);
+  document.getElementById("grCloseBtn2").addEventListener("click", closeGr);
+  grBackdrop.addEventListener("click", function(e){ if(e.target === grBackdrop) closeGr(); });
+
+  function parseCSV(text){
+    var rows = [], row = [], field = "", inQuotes = false;
+    for(var i=0;i<text.length;i++){
+      var c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; }
+          else { inQuotes = false; }
+        } else field += c;
+      } else {
+        if(c === '"') inQuotes = true;
+        else if(c === ','){ row.push(field); field = ""; }
+        else if(c === '\r'){ /* skip */ }
+        else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ""; }
+        else field += c;
+      }
+    }
+    if(field.length || row.length){ row.push(field); rows.push(row); }
+    return rows.filter(function(r){ return r.length > 1 || (r.length === 1 && r[0] !== ""); });
+  }
+
+  function cleanGrIsbn(v){ return (v||"").replace(/[="]/g, "").trim(); }
+
+  function guessFormatFromBinding(binding){
+    var b = (binding||"").toLowerCase();
+    if(b.indexOf("audio") > -1) return "audiobook";
+    if(b.indexOf("kindle") > -1 || b.indexOf("ebook") > -1 || b.indexOf("e-book") > -1 || b.indexOf("digital") > -1) return "ebook";
+    return "physical";
+  }
+  function guessStatusFromShelf(shelf){
+    var s = (shelf||"").toLowerCase();
+    if(s.indexOf("currently") > -1 || s === "reading") return "reading";
+    if(s === "read") return "read";
+    if(s.indexOf("dnf") > -1 || s.indexOf("did-not-finish") > -1 || s.indexOf("abandoned") > -1) return "dnf";
+    return "want";
+  }
+  function parseGrDate(v){
+    if(!v) return null;
+    var t = Date.parse(v.trim());
+    return isNaN(t) ? null : t;
+  }
+
+  function rowsToObjects(rows){
+    if(!rows.length) return [];
+    var headers = rows[0].map(function(h){ return h.trim(); });
+    var idx = {};
+    headers.forEach(function(h, i){ idx[h] = i; });
+    var get = function(row, name){ return idx.hasOwnProperty(name) ? (row[idx[name]] || "").trim() : ""; };
+
+    return rows.slice(1).filter(function(r){ return r.length > 1; }).map(function(row){
+      var isbn13 = cleanGrIsbn(get(row, "ISBN13"));
+      var isbn = isbn13 || cleanGrIsbn(get(row, "ISBN"));
+      var author = get(row, "Author");
+      var additional = get(row, "Additional Authors");
+      if(additional) author = author + ", " + additional;
+      var exclusiveShelf = get(row, "Exclusive Shelf");
+      var bookshelves = get(row, "Bookshelves");
+      var tags = bookshelves.split(",").map(function(t){ return t.trim(); })
+        .filter(function(t){ return t && t !== exclusiveShelf; });
+      var rating = parseInt(get(row, "My Rating")) || 0;
+      var pages = parseInt(get(row, "Number of Pages")) || null;
+      var year = parseInt(get(row, "Year Published")) || parseInt(get(row, "Original Publication Year")) || null;
+      var review = get(row, "My Review");
+      var privateNotes = get(row, "Private Notes");
+      var notes = [review, privateNotes].filter(Boolean).join("\n\n");
+
+      return {
+        title: get(row, "Title"),
+        author: author || "Unknown",
+        isbn: isbn,
+        rating: Math.max(0, Math.min(5, rating)),
+        pages: pages,
+        year: year,
+        format: guessFormatFromBinding(get(row, "Binding")),
+        status: guessStatusFromShelf(exclusiveShelf),
+        tags: tags,
+        notes: notes,
+        dateAdded: parseGrDate(get(row, "Date Added")) || Date.now(),
+        dateFinished: guessStatusFromShelf(exclusiveShelf) === "read" ? parseGrDate(get(row, "Date Read")) : null
+      };
+    }).filter(function(b){ return b.title; });
+  }
+
+  function findExistingMatch(parsed){
+    var normIsbn = (parsed.isbn||"").replace(/[^0-9Xx]/g,"");
+    var key = (parsed.title+"|"+parsed.author).toLowerCase();
+    return books.find(function(b){
+      if(normIsbn && b.isbn && b.isbn.replace(/[^0-9Xx]/g,"") === normIsbn) return true;
+      return (b.title+"|"+b.author).toLowerCase() === key;
+    });
+  }
+
+  document.getElementById("grStartBtn").addEventListener("click", async function(){
+    var fileInput = document.getElementById("grFile");
+    var file = fileInput.files[0];
+    if(!file){ alert("Choose a CSV file first."); return; }
+
+    var owner = document.getElementById("grOwner").value;
+    var fetchCovers = document.getElementById("grFetchCovers").checked;
+    var skipDupes = document.getElementById("grSkipDupes").checked;
+
+    var btn = this;
+    btn.disabled = true;
+    var progressEl = document.getElementById("grProgress");
+    var logEl = document.getElementById("grLog");
+    progressEl.style.display = "block";
+    logEl.style.display = "block";
+    logEl.innerHTML = "";
+    progressEl.textContent = "Reading file…";
+
+    var text = await file.text();
+    var rows = parseCSV(text);
+    var parsedBooks = rowsToObjects(rows);
+
+    if(!parsedBooks.length){
+      progressEl.textContent = "Couldn't find any books in that file — make sure it's an unmodified Goodreads/StoryGraph export.";
+      btn.disabled = false;
+      return;
+    }
+
+    var okCount = 0, skipCount = 0, failCount = 0;
+    for(var i=0;i<parsedBooks.length;i++){
+      var p = parsedBooks[i];
+      progressEl.textContent = "Importing " + (i+1) + " of " + parsedBooks.length + "…";
+      var row = document.createElement("div");
+      row.className = "bulk-log-row";
+      row.innerHTML = "<span>"+esc(p.title)+"</span><span>…</span>";
+      logEl.appendChild(row);
+      logEl.scrollTop = logEl.scrollHeight;
+
+      if(skipDupes && findExistingMatch(p)){
+        skipCount++;
+        row.className = "bulk-log-row";
+        row.innerHTML = "<span>"+esc(p.title)+"</span><span>already have it</span>";
+        continue;
+      }
+
+      var coverUrl = "";
+      if(fetchCovers && p.isbn){
+        try{
+          var found = await fetchByIsbn(p.isbn);
+          if(found && found.coverUrl) coverUrl = found.coverUrl;
+          await sleep(250);
+        }catch(e){ /* cover fetch is best-effort */ }
+      }
+
+      try{
+        var newBook = {
+          id: uid(),
+          title: p.title,
+          author: p.author,
+          series: "",
+          seriesNum: null,
+          format: p.format,
+          owner: owner,
+          status: p.status,
+          dateFinished: p.dateFinished,
+          genre: "",
+          year: p.year,
+          pages: p.pages,
+          isbn: p.isbn,
+          coverUrl: coverUrl,
+          tags: p.tags,
+          lentTo: null,
+          lentDate: null,
+          notes: p.notes,
+          rating: p.rating,
+          dateAdded: p.dateAdded
+        };
+        books.push(newBook);
+        okCount++;
+        row.className = "bulk-log-row ok";
+        row.innerHTML = "<span>"+esc(p.title)+"</span><span>added</span>";
+      }catch(err){
+        failCount++;
+        row.className = "bulk-log-row err";
+        row.innerHTML = "<span>"+esc(p.title)+"</span><span>failed</span>";
+      }
+      saveBooksLocal();
+      render();
+    }
+
+    progressEl.textContent = "Done — " + okCount + " added, " + skipCount + " skipped, " + failCount + " failed.";
     btn.disabled = false;
   });
 

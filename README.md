@@ -21,23 +21,35 @@ Add a book's real Amazon (Kindle or Audible), Apple Books, or Libby product link
 
 For Libby, there's no public search link — open the title in the Libby app, tap Share, and copy the link it gives you.
 
-## On auto-importing from Kindle/Audible/Apple accounts
+## Importing from Goodreads or StoryGraph
 
-Worth documenting why this app doesn't do this: none of Amazon (Kindle or Audible) or Apple offer a public API for reading the contents of your personal library. There's no "Sign in with Amazon" or "Sign in with Apple" scope that hands over your book list — this isn't a gap in this app, it's not offered to any third-party developer.
+**Toolbar → Goodreads/StoryGraph.** Export your library from either service as a CSV (Goodreads: My Books → Import and Export → Export Library; StoryGraph: Settings → Manage Your Account → Export StoryGraph Library), then pick that file in the import dialog.
 
-What exists instead are unofficial, reverse-engineered clients (mainly for Audible) that mimic the private app's login flow. Using one would mean:
-- Running a real backend server — this can't happen from a static page in a browser, both because of cross-origin restrictions and because the login flow involves device-registration cryptography the Amazon apps do internally.
-- Handling 2FA/CAPTCHA challenges interactively.
-- Accepting that it's against Amazon's terms of service in the fine print, and can break without warning whenever Amazon changes something internally.
+Everything comes straight from the file — no lookups needed:
+- Title, author (plus any additional authors), rating, page count, year, ISBN
+- Shelves become tags (the "read"/"to-read"/"currently-reading" shelf becomes the book's status instead, so it isn't duplicated as a tag)
+- Your review and private notes are combined into the notes field
+- Date added and date finished carry over as-is
 
-That's a meaningfully bigger, riskier project than this app, and not one built into it.
+Format (physical/ebook/audiobook) is guessed from the "Binding" column — reliable for "Audiobook" and "Kindle Edition," a reasonable default of "physical" otherwise, worth a glance afterward. There's an optional "fetch cover art by ISBN" checkbox that adds a Google Books/Open Library lookup per book (slower — one request per title), and a "skip books already in your library" checkbox that matches on ISBN or title+author so re-running an export later doesn't create duplicates.
 
-**A lower-risk alternative, if useful later:** a small script you paste into your browser's console while logged into `amazon.com` or `audible.com` yourself, which reads the "Manage Your Content and Devices" or library page you're already looking at and turns it into JSON — then you paste that into this app's Import button. No credentials touch the app, nothing runs as a service, and it's a manual "run it when you want a refresh" step rather than live sync. It's also fragile (breaks if Amazon changes their page layout) and one-directional (pulls a list in, doesn't keep two-way sync). Ask if you'd like this built.
+## On importing from Kindle/Audible/Apple accounts
+
+There's no "Sign in with Amazon" or "Sign in with Apple" that hands a third-party app your book list — neither offers that publicly, so a real login-based import isn't realistic here (see below for why). But there are legitimate, sanctioned paths that don't require anything risky:
+
+**Amazon's own data export.** Amazon has an official "Request My Data" tool (in your account's privacy settings) that lets you request a copy of your account data, including Kindle purchases and Audible activity — Audible is part of your Amazon account, so one request covers both. It's free, doesn't touch any credentials in this app, but takes a few days to arrive by email as a downloadable file. Once you have a real sample file, the importer for it can be built the same way the Goodreads one was — bring it back here and it can happen quickly.
+
+**Apple's own data export.** `privacy.apple.com` → "Request a copy of your data" → the "Apple Media Services" category includes App Store/iTunes/Apple Books purchase history. Same idea — official, free, roughly a week's turnaround. If either of you reads Apple Books on a Mac, there's also a faster local option: Apple Books keeps its library in a database file on disk, and the open-source tool `readstor` (`brew install readstor`, or `cargo install readstor`) reads it directly — no waiting on Apple at all, though it's a command-line tool you'd run yourself.
+
+**Why not a real login integration?** Neither Amazon nor Apple offers a public API for reading personal library contents to third-party apps — this isn't a gap in this app, it's simply not offered to any developer. What exists instead are unofficial, reverse-engineered clients (mainly for Audible) that mimic the private app's login flow, which would mean running a real backend server (can't happen from a static page, both for cross-origin reasons and because the login flow involves device-registration cryptography), handling 2FA/CAPTCHA interactively, and accepting it's against the platform's terms of service in the fine print — a meaningfully bigger, riskier project than this app, and not one built into it.
+
+**Lowest-effort fallback, if the above don't pan out:** a small script pasted into your browser's console while logged into `amazon.com` yourself, reading the page you're already looking at into JSON for the Import button. No credentials touch the app, nothing runs as a service — but it's fragile (breaks if Amazon changes their page layout) and a manual one-time pull rather than sync. Ask if you'd like this built instead.
 
 ## Features
 
 - **Add by ISBN** — paste an ISBN-10/13 and it pulls title, author, cover, page count, year, and genre from Google Books (falling back to Open Library). Edit anything before saving, or skip the lookup and enter a book by hand.
 - **Bulk ISBN import** — paste a whole list of ISBNs (one per line) and it looks them all up and adds them, with a live log of what worked and what didn't.
+- **Goodreads/StoryGraph import** — bring in an entire library from a CSV export in one go, ratings/shelves/dates and all (see above).
 - **Sort** by title, author, rating, series (grouped, in reading order), publish year, or date added.
 - **Filter** by format (physical / ebook / audiobook), owner (mine / wife's / shared), tag, and a "lent out" toggle.
 - **Search** across title, author, series, genre, and tags.
